@@ -1,0 +1,414 @@
+<?xml version='1.0'?>
+<datamodel version="3.0" 
+           xmlns="http://www.tresos.de/_projects/DataModel2/08/root.xsd" 
+           xmlns:a="http://www.tresos.de/_projects/DataModel2/08/attribute.xsd" 
+           xmlns:v="http://www.tresos.de/_projects/DataModel2/06/schema.xsd" 
+           xmlns:d="http://www.tresos.de/_projects/DataModel2/06/data.xsd">
+
+  <d:ctr type="AUTOSAR" factory="autosar" 
+         xmlns:ad="http://www.tresos.de/_projects/DataModel2/08/admindata.xsd" 
+         xmlns:icc="http://www.tresos.de/_projects/DataModel2/08/implconfigclass.xsd" 
+         xmlns:mt="http://www.tresos.de/_projects/DataModel2/11/multitest.xsd" >
+    <d:lst type="TOP-LEVEL-PACKAGES">
+      <d:ctr name="Gpt" type="AR-PACKAGE">
+        <d:lst type="ELEMENTS">
+          <d:chc name="Gpt" type="AR-ELEMENT" value="MODULE-CONFIGURATION">
+            <d:ctr type="MODULE-CONFIGURATION">
+              <a:a name="DEF" value="ASPath:/TS_T32D3M1I0R0/Gpt"/>
+              <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              <a:a name="MODULE-DESCRIPTION-REF" 
+                   value="ASPath:/TS_T32D3M1I0R0/Gpt_Impl"/>
+              <d:var name="IMPLEMENTATION_CONFIG_VARIANT" type="ENUMERATION" 
+                     value="VariantPreCompile">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              </d:var>
+              <d:lst name="GptChannelConfigSet" type="MAP">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <d:ctr name="GptChannelConfigSet_0" type="IDENTIFIABLE">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <a:a name="UUID" value="ad642eb4-feda-4556-af19-8f334a1465f5"/>
+                  <d:lst name="GptChannelConfiguration" type="MAP">
+                    <d:ctr name="GptChCfg_60MHzFRT" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="43eb2212-a9a8-4c02-9d3e-c3894e40296d"/>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LCP0A">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelId" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_CONTINUOUS">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="6.0E7">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptTimer" type="ENUMERATION" value="FRT_0">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:ref>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="Gpt_Notification_0">
+                        <a:a name="ENABLE" value="false"/>
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="OsTickTimer" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="b5b11950-027c-436b-95c5-97ed99a5c28a"/>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LLPBM2"/>
+                      <d:var name="GptChannelId" type="INTEGER" value="5">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_CONTINUOUS">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="1.2E8"/>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="">
+                        <a:a name="ENABLE" value="true"/>
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptTimer" type="ENUMERATION" value="RLT_34"/>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_1"/>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="false"/>
+                    </d:ctr>
+                    <d:ctr name="TmExt" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="750c8d1e-2d33-419b-bc23-77e9d709068b"/>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LCP0A">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelId" type="INTEGER" value="3">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_CONTINUOUS">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="6.0E7">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="TmExt_UpdateFreeRunningCounter">
+                        <a:a name="ENABLE" value="true"/>
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptTimer" type="ENUMERATION" value="FRT_4">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:ref>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="Wdg_TO" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="af273e77-6836-4dc6-8cf7-bae3de63608c"/>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LLPBM2">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelId" type="INTEGER" value="1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_ONESHOT">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="6.0E7">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false"/>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="Wdg_66_IA_Cbk_GptNotificationTimeout">
+                        <a:a name="ENABLE" value="true"/>
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptTimer" type="ENUMERATION" value="RLT_32">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_1"/>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="true"/>
+                    </d:ctr>
+                    <d:ctr name="Wdg_Trg" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="25212b5f-96b9-4f2c-8815-f4dc0466fb70"/>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LLPBM2">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelId" type="INTEGER" value="2">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_CONTINUOUS">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="6.0E7">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="Wdg_66_IA_Cbk_GptNotificationTrigger">
+                        <a:a name="ENABLE" value="true"/>
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptTimer" type="ENUMERATION" value="RLT_33">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_1">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:ref>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="true"/>
+                    </d:ctr>
+                    <d:ctr name="Rtm_FRT" type="IDENTIFIABLE">
+                      <d:var name="GptChannelId" type="INTEGER" value="4"/>
+                      <d:var name="GptTimer" type="ENUMERATION" value="FRT_1"/>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_CONTINUOUS">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LCP0A">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0"/>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="6.0E7"/>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295"/>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="Gpt_Notification_0">
+                        <a:a name="ENABLE" value="false"/>
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                    </d:ctr>
+                    <d:ctr name="StpCdd" type="IDENTIFIABLE">
+                      <d:var name="GptChannelId" type="INTEGER" value="6">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="GptTimer" type="ENUMERATION" value="FRT_3"/>
+                      <d:var name="GptChannelMode" type="ENUMERATION" 
+                             value="GPT_CH_MODE_CONTINUOUS">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="GptChannelClkSrc" type="ENUMERATION" 
+                             value="CLK_LCP0A">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:ref name="GptChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0"/>
+                      <d:var name="GptChannelTickFrequency" type="FLOAT" 
+                             value="6.0E7">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="GptChannelPrescale" type="ENUMERATION" 
+                             value="GPT_PRESCALE_1">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="GptChannelTickValueMax" type="INTEGER" 
+                             value="4294967295"/>
+                      <d:var name="GptEnableWakeup" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="GptEnableDebug" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="GptNotification" type="FUNCTION-NAME" 
+                             value="StpIf_TimerISR">
+                        <a:a name="ENABLE" value="true"/>
+                      </d:var>
+                      <d:lst name="GptWakeupConfiguration" type="MAP"/>
+                    </d:ctr>
+                  </d:lst>
+                </d:ctr>
+              </d:lst>
+              <d:ctr name="GptConfigurationOfOptApiServices" 
+                     type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="faa9b5d6-944a-45c0-ace9-5cfa695f3c98"/>
+                <d:var name="GptDeinitApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptEnableDisableNotificationApi" type="BOOLEAN" 
+                       value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptSafetyFunctionApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptTimeElapsedApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptTimeRemainingApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptVersionInfoApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptWakeupFunctionalityApi" type="BOOLEAN" 
+                       value="false">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+              </d:ctr>
+              <d:ctr name="GptDriverConfiguration" type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="872f7cd7-3653-4cfd-b62f-7aa1e6800d29"/>
+                <d:var name="GptDevErrorDetect" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="GptErrorCalloutFunction" type="FUNCTION-NAME" 
+                       value="ErrorCalloutHandler">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:lst name="GptIncludeFile">
+                  <d:var type="STRING" value="ErrorCalloutHandler.h">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var type="STRING" value="Wdg_Cbk.h"/>
+                  <d:var type="STRING" value="TmExt_Cfg.h"/>
+                  <d:var type="STRING" value="StpIfCdd.h"/>
+                </d:lst>
+                <d:var name="GptReportWakeupSource" type="BOOLEAN" value="false">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:lst name="GptClockReferencePoint" type="MAP">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <d:ctr name="GptClockReferencePoint_0" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="80921c79-dece-4e16-89b7-796f932bc544"/>
+                    <d:ref name="GptClockReference" type="REFERENCE" 
+                           value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP0A"/>
+                  </d:ctr>
+                  <d:ctr name="GptClockReferencePoint_1" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="6c26ce4b-eff0-47d1-be00-aee224782ca7"/>
+                    <d:ref name="GptClockReference" type="REFERENCE" 
+                           value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LLPBM2"/>
+                  </d:ctr>
+                </d:lst>
+              </d:ctr>
+            </d:ctr>
+          </d:chc>
+        </d:lst>
+      </d:ctr>
+    </d:lst>
+  </d:ctr>
+
+</datamodel>

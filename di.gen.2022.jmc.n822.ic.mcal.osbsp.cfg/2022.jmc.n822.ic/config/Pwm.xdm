@@ -1,0 +1,489 @@
+<?xml version='1.0'?>
+<datamodel version="3.0" 
+           xmlns="http://www.tresos.de/_projects/DataModel2/08/root.xsd" 
+           xmlns:a="http://www.tresos.de/_projects/DataModel2/08/attribute.xsd" 
+           xmlns:v="http://www.tresos.de/_projects/DataModel2/06/schema.xsd" 
+           xmlns:d="http://www.tresos.de/_projects/DataModel2/06/data.xsd">
+
+  <d:ctr type="AUTOSAR" factory="autosar" 
+         xmlns:ad="http://www.tresos.de/_projects/DataModel2/08/admindata.xsd" 
+         xmlns:icc="http://www.tresos.de/_projects/DataModel2/08/implconfigclass.xsd" 
+         xmlns:mt="http://www.tresos.de/_projects/DataModel2/11/multitest.xsd" >
+    <d:lst type="TOP-LEVEL-PACKAGES">
+      <d:ctr name="Pwm" type="AR-PACKAGE">
+        <d:lst type="ELEMENTS">
+          <d:chc name="Pwm" type="AR-ELEMENT" value="MODULE-CONFIGURATION">
+            <d:ctr type="MODULE-CONFIGURATION">
+              <a:a name="DEF" value="ASPath:/TS_T32D3M1I0R0/Pwm"/>
+              <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              <a:a name="MODULE-DESCRIPTION-REF" 
+                   value="ASPath:/TS_T32D3M1I0R0/Pwm_Impl"/>
+              <d:var name="IMPLEMENTATION_CONFIG_VARIANT" type="ENUMERATION" 
+                     value="VariantPreCompile">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              </d:var>
+              <d:lst name="PwmChannelConfigSet" type="MAP">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <d:ctr name="PwmChannelConfigSet_0" type="IDENTIFIABLE">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <a:a name="UUID" value="ddf1f4d4-f7fc-4dc4-aec2-842c5f15e6de"/>
+                  <d:lst name="PwmChannel" type="MAP">
+                    <d:ctr name="RT_CLK" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="0"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_18"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP1A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_LOW"/>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_LOW"/>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_TFT_BL1_PWM" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="1"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_8"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP0A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" 
+                             value="5.55E-5"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_LOW"/>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="PWM_Speed_Out_Uc" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_VARIABLE_PERIOD"/>
+                      <d:var name="PwmChannelId" type="INTEGER" value="2"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_13"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP1A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="1.0"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_BACKLIGHT_SCALE_PWM" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="3"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_23"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP1A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_BACKLIGHT_Decoration_PWM" 
+                           type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="4"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_0">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP0A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_SHIFT_BAR_EN_PWM" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="5"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_11"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP0A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_SHIFT_Telltale_EN_PWM" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="6"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_12"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP1A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_PWM_Backlight_TACHO" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="7"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_19"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP1A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                    <d:ctr name="MDO_PWM_Backlight_SPEEDO" type="IDENTIFIABLE">
+                      <d:var name="PwmChannelClass" type="ENUMERATION" 
+                             value="PWM_FIXED_PERIOD">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmChannelId" type="INTEGER" value="8"/>
+                      <d:var name="PwmTimer" type="ENUMERATION" 
+                             value="BTimer16bit_20"/>
+                      <d:ref name="PwmChannelClkSrcRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP1A"/>
+                      <d:var name="PwmDutycycleDefault" type="INTEGER" value="0"/>
+                      <d:var name="PwmPeriodDefault" type="FLOAT" value="0.0010"/>
+                      <d:var name="PwmChannelStartDelay" type="INTEGER" 
+                             value="128">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmPolarity" type="ENUMERATION" 
+                             value="PWM_HIGH"/>
+                      <d:var name="PwmIdleState" type="ENUMERATION" 
+                             value="PWM_LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmNotification" type="FUNCTION-NAME" 
+                             value="NULL">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmAdcTriggerDefault" type="FLOAT" 
+                             value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmExternalTimerCompareValue" type="FLOAT" 
+                             value="1.0E-5">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmStartAtInit" type="BOOLEAN" value="true">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="PwmDebugMode" type="ENUMERATION" 
+                             value="PWM_DEBUG_MODE_CONTINUE">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                  </d:lst>
+                  <d:lst name="PwmChannelGroup" type="MAP"/>
+                  <d:ctr name="PwmGlobalTimer" type="IDENTIFIABLE">
+                    <a:a name="ENABLE" value="false"/>
+                    <d:ref name="PwmGlobalTimerClkSrcRef" type="REFERENCE" >
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:ref>
+                    <d:var name="PwmGlobalTimerPeriod" type="FLOAT" 
+                           value="1.0E-5">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                    <d:var name="PwmGlobalTimerDebugMode" type="ENUMERATION" 
+                           value="PWM_DEBUG_MODE_CONTINUE">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                  </d:ctr>
+                </d:ctr>
+              </d:lst>
+              <d:ctr name="PwmConfigurationOfOptApiServices" 
+                     type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="ec7701e6-72a2-459a-9f7a-5063c8df6d70"/>
+                <d:var name="PwmDeInitApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmGetOutputState" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmSetDutyCycle" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmSetOutputToIdle" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmSetPeriodAndDuty" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmVersionInfoApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+              </d:ctr>
+              <d:ctr name="PwmGeneral" type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="3a8cd908-47c4-4f88-bd1d-4814eff085e3"/>
+                <d:var name="PwmDevErorDetect" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmDutycycleUpdatedEndperiod" type="BOOLEAN" 
+                       value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmErrorCalloutFunction" type="FUNCTION-NAME" 
+                       value="ErrorCalloutHandler">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:lst name="PwmIncludeFile">
+                  <d:var type="STRING" value="ErrorCalloutHandler.h">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                </d:lst>
+                <d:var name="PwmIndex" type="INTEGER" value="0">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmNotificationSupported" type="BOOLEAN" 
+                       value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="PwmPeriodUpdatedEndperiod" type="BOOLEAN" 
+                       value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+              </d:ctr>
+            </d:ctr>
+          </d:chc>
+        </d:lst>
+      </d:ctr>
+    </d:lst>
+  </d:ctr>
+
+</datamodel>

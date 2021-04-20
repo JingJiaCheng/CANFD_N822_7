@@ -1,0 +1,976 @@
+<?xml version='1.0'?>
+<datamodel version="3.0" 
+           xmlns="http://www.tresos.de/_projects/DataModel2/08/root.xsd" 
+           xmlns:a="http://www.tresos.de/_projects/DataModel2/08/attribute.xsd" 
+           xmlns:v="http://www.tresos.de/_projects/DataModel2/06/schema.xsd" 
+           xmlns:d="http://www.tresos.de/_projects/DataModel2/06/data.xsd">
+
+  <d:ctr type="AUTOSAR" factory="autosar" 
+         xmlns:ad="http://www.tresos.de/_projects/DataModel2/08/admindata.xsd" 
+         xmlns:icc="http://www.tresos.de/_projects/DataModel2/08/implconfigclass.xsd" 
+         xmlns:mt="http://www.tresos.de/_projects/DataModel2/11/multitest.xsd" >
+    <d:lst type="TOP-LEVEL-PACKAGES">
+      <d:ctr name="Dio" type="AR-PACKAGE">
+        <d:lst type="ELEMENTS">
+          <d:chc name="Dio" type="AR-ELEMENT" value="MODULE-CONFIGURATION">
+            <d:ctr type="MODULE-CONFIGURATION">
+              <a:a name="DEF" value="ASPath:/TS_T32D3M1I0R0/Dio"/>
+              <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              <a:a name="MODULE-DESCRIPTION-REF" 
+                   value="ASPath:/TS_T32D3M1I0R0/Dio_Impl"/>
+              <d:var name="IMPLEMENTATION_CONFIG_VARIANT" type="ENUMERATION" 
+                     value="VariantPreCompile">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              </d:var>
+              <d:ctr name="DioGeneral" type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="19f08eba-c375-43af-9fba-18544a9a6325"/>
+                <d:var name="DioDevErrorDetect" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="DioErrorCalloutFunction" type="FUNCTION-NAME" 
+                       value="ErrorCalloutHandler">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="DioFlipChannelApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:lst name="DioIncludeFile">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <d:var type="STRING" value="ErrorCalloutHandler.h">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                </d:lst>
+                <d:var name="DioVersionInfoApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+              </d:ctr>
+              <d:lst name="DioConfig" type="MAP">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <d:ctr name="DioConfig_0" type="IDENTIFIABLE">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <a:a name="UUID" value="2be62a34-083d-4ab7-bed6-bbbc99c1bc81"/>
+                  <d:lst name="DioPort" type="MAP">
+                    <d:ctr name="DIO0" type="IDENTIFIABLE">
+                      <a:a name="UUID" 
+                           value="dc0be7fe-8e2c-4115-a1d6-1ed8e719a257"/>
+                      <d:var name="DioPortId" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:lst name="DioChannel" type="MAP">
+                        <d:ctr name="DIO_UNUSED_P0_19" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="19">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P019"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_00" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="0">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P000">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@DEF</a:v>
+                              <a:v>@CALC</a:v>
+                            </a:a>
+                          </d:var>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_17" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="17">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P017"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_02" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="2">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P002"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_03" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="3">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P003"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_TFT_RESET" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="16">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P016"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_11" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="11">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P011"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_RESET_CON" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="26">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P026"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_31" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="31">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P031"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_01" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="1"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P001"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_SHUT_DOWN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="27">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P027"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_28" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="28">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P028"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P0_18" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="18">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P018"/>
+                        </d:ctr>
+                      </d:lst>
+                      <d:lst name="DioChannelGroup" type="MAP"/>
+                    </d:ctr>
+                    <d:ctr name="DIO2" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="dc0be7fe-8e2c-4115-a1d6-1ed8e719a257"/>
+                      <d:var name="DioPortId" type="INTEGER" value="2">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:lst name="DioChannel" type="MAP">
+                        <d:ctr name="DIO_UNUSED_P2_16" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="80">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P216">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@DEF</a:v>
+                              <a:v>@CALC</a:v>
+                            </a:a>
+                          </d:var>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P2_17" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="81">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P217"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_P_3V3SW_EN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="86">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P222"/>
+                        </d:ctr>
+                        <d:ctr name="MDI_Low_OilPressure_uC" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="83">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P219"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_SHIFT_BAR_EN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="91">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P227"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_SHIFT_Telltale_EN" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="92">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P228"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_IGN_INT" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="88">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P224"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_FUEL_RED" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="95">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P231"/>
+                        </d:ctr>
+                      </d:lst>
+                      <d:lst name="DioChannelGroup" type="MAP"/>
+                    </d:ctr>
+                    <d:ctr name="DIO3" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="49d1e3bf-c65a-4bc0-a132-0cd606027a4c"/>
+                      <d:var name="DioPortId" type="INTEGER" value="3">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:lst name="DioChannel" type="MAP">
+                        <d:ctr name="DIO_MDI_Passenger_SeatBelt" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="109">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P313"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_B_CAN_MCU_STB" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="99"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P303"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_B_CAN_MCU_RXD" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="101">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P305"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_ParkBrake_Uc" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="107">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P311"/>
+                        </d:ctr>
+                        <d:ctr name="MDI_Low_Air_Pressure_uC" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="106">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P310"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_AIRBAG_uC" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="110">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P314"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_4W_L" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="104">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P308"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P3_07" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="103">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P307"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_B_CAN_MCU_TXD" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="102">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P306"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_DO_TCU_D_Uc" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="126">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P330"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P3_31" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="127">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P331"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_P_CAN_MCU_RXD" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="112">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P316"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_P_CAN_MCU_TXD" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="113">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P317"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_Driver_SeatBelt" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="108">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P312"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_P_CAN_MCU_STB" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="111">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P315"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_Unused_P3_22" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="118">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P322"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_DO_TCU_S_uC" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="120">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P324"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_DO_TCU_N_Uc" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="121"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P325"/>
+                        </d:ctr>
+                        <d:ctr name="MDI_LOCK_uC" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="125"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P329"/>
+                        </d:ctr>
+                      </d:lst>
+                      <d:lst name="DioChannelGroup" type="MAP"/>
+                    </d:ctr>
+                    <d:ctr name="DIO4" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="d7cf2d06-9857-4de2-a32a-74dcba341f42"/>
+                      <d:var name="DioPortId" type="INTEGER" value="4">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:lst name="DioChannel" type="MAP">
+                        <d:ctr name="DIO_UNUSED_P4_02" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="130">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P402"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_25" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="153">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P425"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_DSP_STANDBY_MODE" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="154">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P426"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_27" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="155">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P427"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_28" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="156">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P428"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_P12V_EN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="158">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P430"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_DISP_PWR_EN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="159">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P431"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_29" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="157"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P429"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_03" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="131">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P403"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_04" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="132">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P404"/>
+                        </d:ctr>
+                        <d:ctr name="MDIL_Exhaust_Brake_uC" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="135">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P407"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_08" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="136">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P408"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_09" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="137">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P409"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_10" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="138">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P410"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_11" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="139">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P411"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_POWER_FAULT" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="140">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P412"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_CHARGE_uC" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="128">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P400">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@DEF</a:v>
+                              <a:v>@CALC</a:v>
+                            </a:a>
+                          </d:var>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P4_01" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="129"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P401"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_P_5VSW_EN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="133">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P405"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_SHIFT_RCK" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="134">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P406"/>
+                        </d:ctr>
+                      </d:lst>
+                      <d:lst name="DioChannelGroup" type="MAP"/>
+                    </d:ctr>
+                    <d:ctr name="DIO5" type="IDENTIFIABLE">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      <a:a name="UUID" 
+                           value="9da862a3-2fa3-4bc3-b261-c1ff6caf6925"/>
+                      <d:var name="DioPortId" type="INTEGER" value="5">
+                        <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                      </d:var>
+                      <d:lst name="DioChannel" type="MAP">
+                        <d:ctr name="DIO_UNUSED_P5_06" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="166">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P506"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_07" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="167">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P507"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_20" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="180">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P520"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDI_TFT_BL1_FAULT" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="161"/>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P501"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNSUED_P5_27" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="187">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P527"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_28" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="188">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P528"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_29" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="189">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P529"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_30" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="190">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P530"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_31" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="191">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P531"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_TFT_BL1_EN" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="162">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P502"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_08" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="168">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P508"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_09" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="169">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P509"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_12" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="172">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P512"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_13" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="173">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P513"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_14" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="174">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P514"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_BACKLIGHT_SCALE" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="175">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P515"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_BAT_C_1" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="177">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P517"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_22" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="182">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P522"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_21" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="181">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P521"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_05" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="165">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P505"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_18" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="178">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P518"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_UNUSED_P5_19" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="179">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P519"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_TEST_2" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="163">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P503"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_TEST_1" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="164">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P504"/>
+                        </d:ctr>
+                        <d:ctr name="DIO_MDO_BACKLIGHT_DECORATION" 
+                               type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="176">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@CALC</a:v>
+                              <a:v>@DEF</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P516"/>
+                        </d:ctr>
+                      </d:lst>
+                      <d:lst name="DioChannelGroup" type="MAP"/>
+                    </d:ctr>
+                    <d:ctr name="DIO6" type="IDENTIFIABLE">
+                      <d:var name="DioPortId" type="INTEGER" value="6"/>
+                      <d:lst name="DioChannel" type="MAP">
+                        <d:ctr name="DIO_UNUSED_P6_00" type="IDENTIFIABLE">
+                          <d:var name="DioChannelId" type="INTEGER" value="192">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@DEF</a:v>
+                              <a:v>@CALC</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:var name="DioChannelPin" type="ENUMERATION" 
+                                 value="P600">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@DEF</a:v>
+                              <a:v>@CALC</a:v>
+                            </a:a>
+                          </d:var>
+                        </d:ctr>
+                      </d:lst>
+                      <d:lst name="DioChannelGroup" type="MAP"/>
+                    </d:ctr>
+                  </d:lst>
+                </d:ctr>
+              </d:lst>
+            </d:ctr>
+          </d:chc>
+        </d:lst>
+      </d:ctr>
+    </d:lst>
+  </d:ctr>
+
+</datamodel>

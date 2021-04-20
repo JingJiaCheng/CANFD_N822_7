@@ -1,0 +1,293 @@
+<?xml version='1.0'?>
+<datamodel version="3.0" 
+           xmlns="http://www.tresos.de/_projects/DataModel2/08/root.xsd" 
+           xmlns:a="http://www.tresos.de/_projects/DataModel2/08/attribute.xsd" 
+           xmlns:v="http://www.tresos.de/_projects/DataModel2/06/schema.xsd" 
+           xmlns:d="http://www.tresos.de/_projects/DataModel2/06/data.xsd">
+
+  <d:ctr type="AUTOSAR" factory="autosar" 
+         xmlns:ad="http://www.tresos.de/_projects/DataModel2/08/admindata.xsd" 
+         xmlns:icc="http://www.tresos.de/_projects/DataModel2/08/implconfigclass.xsd" 
+         xmlns:mt="http://www.tresos.de/_projects/DataModel2/11/multitest.xsd" >
+    <d:lst type="TOP-LEVEL-PACKAGES">
+      <d:ctr name="Wdg" type="AR-PACKAGE">
+        <d:lst type="ELEMENTS">
+          <d:chc name="Wdg" type="AR-ELEMENT" value="MODULE-CONFIGURATION">
+            <d:ctr type="MODULE-CONFIGURATION">
+              <a:a name="DEF" value="ASPath:/TS_T32D3M1I0R0/Wdg"/>
+              <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              <a:a name="MODULE-DESCRIPTION-REF" 
+                   value="ASPath:/TS_T32D3M1I0R0/Wdg_Impl"/>
+              <d:var name="IMPLEMENTATION_CONFIG_VARIANT" type="ENUMERATION" 
+                     value="VariantPreCompile">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+              </d:var>
+              <d:lst name="WdgDemEventParameterRefs" type="MAP"/>
+              <d:lst name="WdgGptChannelParameterRefs" type="MAP">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <d:ctr name="WdgGptChannelParameterRefs_K2" type="IDENTIFIABLE">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <a:a name="UUID" value="8b72d2d9-515c-4dd5-af5b-ed434ec831d5"/>
+                  <d:lst name="WdgTimeoutTimer">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <d:ref type="REFERENCE" 
+                           value="ASPath:/Gpt/Gpt/GptChannelConfigSet_0/Wdg_TO">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:ref>
+                  </d:lst>
+                  <d:lst name="WdgTriggerTimer">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <d:ref type="REFERENCE" 
+                           value="ASPath:/Gpt/Gpt/GptChannelConfigSet_0/Wdg_Trg">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:ref>
+                  </d:lst>
+                </d:ctr>
+              </d:lst>
+              <d:ctr name="WdgGeneral" type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="229aca5e-0a7c-44f0-95c8-eb08b4fbf23d"/>
+                <d:var name="WdgDemEventDisableRejected" type="BOOLEAN" 
+                       value="false">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgDemEventModeFailed" type="BOOLEAN" value="false">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgDevErrorDetect" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgDisableAllowed" type="BOOLEAN" value="false">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgErrorCalloutFunction" type="FUNCTION-NAME" 
+                       value="ErrorCalloutHandler">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgIndex" type="INTEGER" value="0">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgInitialTimeout" type="FLOAT" value="3.0">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgMaxTimeout" type="FLOAT" value="4.0">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgRunArea" type="ENUMERATION" value="ROM">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgTriggerAddress" type="INTEGER" value="130816">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgTriggerLocation" type="FUNCTION-NAME" 
+                       value="Wdg_66_IA_ActivateTrigger">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:var name="WdgVersionInfoApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                </d:var>
+                <d:lst name="WdgIncludeFile"/>
+                <d:var name="WdgDemEventTimeout" type="BOOLEAN" value="false"/>
+                <d:var name="WdgVendorApiInfixEnabled" type="BOOLEAN" 
+                       value="false">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+              </d:ctr>
+              <d:lst name="WdgSettingsConfig" type="MAP">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <d:ctr name="Hw_WdgCfg" type="IDENTIFIABLE">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <a:a name="UUID" value="e6a152e2-4aab-4214-a427-0a48f681c7db"/>
+                  <d:var name="WdgClockSelection" type="ENUMERATION" 
+                         value="SlowCRClock">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgDefaultMode" type="ENUMERATION" 
+                         value="WDGIF_SLOW_MODE"/>
+                  <d:var name="WdgDefaultModePss" type="ENUMERATION" 
+                         value="WDGIF_OFF_MODE"/>
+                  <d:var name="WdgEnablePrewarnIrq" type="BOOLEAN" value="false"/>
+                  <d:var name="WdgEnableWDGCounterMonitor" type="BOOLEAN" 
+                         value="false">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgHwUnit" type="ENUMERATION" 
+                         value="WDG_HWDG_UNIT"/>
+                  <d:var name="WdgNmiNotification" type="FUNCTION-NAME" 
+                         value="Wdg_66_IA_NmiNotification">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgPrewarnNotification" type="FUNCTION-NAME" 
+                         value="Wdg_66_IA_PrewarnNotification">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgResetDelay" type="INTEGER" value="0">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgResetNMIConfig" type="ENUMERATION" 
+                         value="WDG_SOFTRESET">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:ctr name="WdgSettingsSlow" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="3d43abf2-2379-40a2-93fd-ba2107ae34f3"/>
+                    <d:var name="WdgSlowTrgValue" type="INTEGER" 
+                           value="30000000">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                    <d:var name="WdgSlowValuePss" type="INTEGER" 
+                           value="2147483648">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                    <d:var name="WdgSlowValueRun" type="INTEGER" value="400000"/>
+                    <d:var name="WdgSlowWindowPss" type="INTEGER" value="50">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                    <d:var name="WdgSlowWindowRun" type="INTEGER" value="100">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                  </d:ctr>
+                  <d:ctr name="WdgSettingsFast" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="cb0e4261-bea5-410c-9f61-9188b9640353"/>
+                    <d:var name="WdgFastValue" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                    <d:var name="WdgFastValuePss" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                  </d:ctr>
+                  <d:ctr name="WdgSettingsOff" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="c379033c-2337-4447-b4ee-27bc74bde4cf"/>
+                    <d:var name="WdgOffValue" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                    <d:var name="WdgOffValuePss" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                  </d:ctr>
+                  <d:lst name="WdgExternalConfiguration" type="MAP"/>
+                  <d:var name="WdgCounterMonitorBitOutputSelection" 
+                         type="ENUMERATION" value="Bit0">
+                    <a:a name="IMPORTER_INFO">
+                      <a:v>@DEF</a:v>
+                      <a:v>@CALC</a:v>
+                    </a:a>
+                  </d:var>
+                </d:ctr>
+                <d:ctr name="Sw_WdgCfg" type="IDENTIFIABLE">
+                  <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  <a:a name="UUID" value="968dc298-490e-44d8-975f-e4de7597d14c"/>
+                  <d:var name="WdgDefaultMode" type="ENUMERATION" 
+                         value="WDGIF_SLOW_MODE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgDefaultModePss" type="ENUMERATION" 
+                         value="WDGIF_OFF_MODE"/>
+                  <d:var name="WdgHwUnit" type="ENUMERATION" 
+                         value="WDG_SWDG_UNIT_0">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgResetNMIConfig" type="ENUMERATION" 
+                         value="WDG_SOFTRESET">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgEnablePrewarnIrq" type="BOOLEAN" value="false"/>
+                  <d:var name="WdgResetDelay" type="INTEGER" value="0">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgClockSelection" type="ENUMERATION" 
+                         value="SlowCRClock">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgEnableWDGCounterMonitor" type="BOOLEAN" 
+                         value="false">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgNmiNotification" type="FUNCTION-NAME" 
+                         value="Wdg_66_IA_NmiNotification">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:var name="WdgPrewarnNotification" type="FUNCTION-NAME" 
+                         value="Wdg_66_IA_PrewarnNotification">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                  </d:var>
+                  <d:ctr name="WdgSettingsFast" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="39f3e4aa-4ef7-4b52-8c8e-74422c796f55"/>
+                    <d:var name="WdgFastValue" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                    <d:var name="WdgFastValuePss" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                  </d:ctr>
+                  <d:ctr name="WdgSettingsOff" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="3d11083f-af13-4199-a1f7-08c53a0cfd7a"/>
+                    <d:var name="WdgOffValue" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                    <d:var name="WdgOffValuePss" type="ENUMERATION" 
+                           value="not_used">
+                      <a:a name="IMPORTER_INFO" value="@DEF"/>
+                    </d:var>
+                  </d:ctr>
+                  <d:ctr name="WdgSettingsSlow" type="IDENTIFIABLE">
+                    <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    <a:a name="UUID" 
+                         value="6e40d2d4-bbf3-48ef-b386-661432ae18e3"/>
+                    <d:var name="WdgSlowWindowRun" type="INTEGER" value="100">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                    <d:var name="WdgSlowValueRun" type="INTEGER" value="400000"/>
+                    <d:var name="WdgSlowWindowPss" type="INTEGER" value="50">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                    <d:var name="WdgSlowValuePss" type="INTEGER" 
+                           value="2147483648">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                    <d:var name="WdgSlowTrgValue" type="INTEGER" 
+                           value="30000000">
+                      <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                    </d:var>
+                  </d:ctr>
+                  <d:lst name="WdgExternalConfiguration" type="MAP"/>
+                  <d:var name="WdgCounterMonitorBitOutputSelection" 
+                         type="ENUMERATION" value="Bit0">
+                    <a:a name="IMPORTER_INFO">
+                      <a:v>@DEF</a:v>
+                      <a:v>@CALC</a:v>
+                    </a:a>
+                  </d:var>
+                </d:ctr>
+              </d:lst>
+              <d:ctr name="WdgPublishedInformation" type="IDENTIFIABLE">
+                <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
+                <a:a name="UUID" value="c3e3fc4d-e004-47c1-84b1-c44a8f06ee39"/>
+                <d:var name="WdgTriggerMode" type="ENUMERATION" value="WDG_BOTH">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+              </d:ctr>
+            </d:ctr>
+          </d:chc>
+        </d:lst>
+      </d:ctr>
+    </d:lst>
+  </d:ctr>
+
+</datamodel>

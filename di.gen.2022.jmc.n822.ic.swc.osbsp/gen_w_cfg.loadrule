@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<scm:sourceControlLoadRule eclipseProjectOptions="create" version="1" xmlns:scm="http://com.ibm.team.scm">
+    <itemLoadRule>
+        <component name="di-gen-2018-mazda-j59-ic-swc"/>
+        <item repositoryPath="/di.gen.2018.mazda.j59.ic.swc"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-gen-2018-mazda-j59-ic-swc"/>
+        <item repositoryPath="/di.gen.2018.mazda.j59.ic.swc.cfg"/>
+    </itemLoadRule>
+</scm:sourceControlLoadRule>

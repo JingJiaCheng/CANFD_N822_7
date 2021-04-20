@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<scm:sourceControlLoadRule eclipseProjectOptions="create" version="1" xmlns:scm="http://com.ibm.team.scm">
+    <itemLoadRule>
+        <component name="di-bsw-comms-turingb"/>
+        <item repositoryPath="/di.bsw.comms.turingb"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-bsw-comms-turingb"/>
+        <item repositoryPath="/di.bsw.comms.turingb.test"/>
+    </itemLoadRule>
+</scm:sourceControlLoadRule>

@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<AUTOSAR xmlns="http://autosar.org/2.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/2.1.2 autosar.xsd">
+  <TOP-LEVEL-PACKAGES>
+    <AR-PACKAGE>
+      <SHORT-NAME>Demo</SHORT-NAME>
+      <ELEMENTS>
+        <ECU-CONFIGURATION>
+          <SHORT-NAME>Demo</SHORT-NAME>
+          <MODULE-REFS>
+            <MODULE-REF DEST="MODULE-CONFIGURATION">/Dio/Dio</MODULE-REF>
+          </MODULE-REFS>
+        </ECU-CONFIGURATION>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </TOP-LEVEL-PACKAGES>
+</AUTOSAR>

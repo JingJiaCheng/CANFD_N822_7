@@ -1,0 +1,241 @@
+<?xml version='1.0'?>
+<datamodel version="3.0" 
+           xmlns="http://www.tresos.de/_projects/DataModel2/08/root.xsd" 
+           xmlns:a="http://www.tresos.de/_projects/DataModel2/08/attribute.xsd" 
+           xmlns:v="http://www.tresos.de/_projects/DataModel2/06/schema.xsd" 
+           xmlns:d="http://www.tresos.de/_projects/DataModel2/06/data.xsd">
+
+  <d:ctr type="AUTOSAR" factory="autosar" 
+         xmlns:ad="http://www.tresos.de/_projects/DataModel2/08/admindata.xsd" 
+         xmlns:icc="http://www.tresos.de/_projects/DataModel2/08/implconfigclass.xsd" 
+         xmlns:mt="http://www.tresos.de/_projects/DataModel2/11/multitest.xsd" >
+    <d:lst type="TOP-LEVEL-PACKAGES">
+      <d:ctr name="Spi" type="AR-PACKAGE">
+        <d:lst type="ELEMENTS">
+          <d:chc name="Spi" type="AR-ELEMENT" value="MODULE-CONFIGURATION">
+            <d:ctr type="MODULE-CONFIGURATION">
+              <a:a name="DEF" value="ASPath:/TS_T32D3M1I1R0/Spi"/>
+              <d:var name="IMPLEMENTATION_CONFIG_VARIANT" type="ENUMERATION" 
+                     value="VariantPreCompile">
+                <a:a name="IMPORTER_INFO" value="@DEF"/>
+              </d:var>
+              <d:lst name="SpiDriver" type="MAP">
+                <d:ctr name="SpiDriver_0" type="IDENTIFIABLE">
+                  <d:var name="SpiMaxChannel" type="INTEGER" value="0">
+                    <a:a name="ENABLE" value="false"/>
+                  </d:var>
+                  <d:var name="SpiMaxJob" type="INTEGER" value="0">
+                    <a:a name="ENABLE" value="false"/>
+                    <a:a name="IMPORTER_INFO">
+                      <a:v>@DEF</a:v>
+                      <a:v>@CALC</a:v>
+                    </a:a>
+                  </d:var>
+                  <d:var name="SpiMaxSequence" type="INTEGER" value="0">
+                    <a:a name="ENABLE" value="false"/>
+                    <a:a name="IMPORTER_INFO">
+                      <a:v>@DEF</a:v>
+                      <a:v>@CALC</a:v>
+                    </a:a>
+                  </d:var>
+                  <d:lst name="SpiChannel" type="MAP">
+                    <d:ctr name="SpiChannel_TT" type="IDENTIFIABLE">
+                      <d:var name="SpiChannelId" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="SpiChannelType" type="ENUMERATION" value="EB"/>
+                      <d:var name="SpiDataWidth" type="INTEGER" value="8">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiDefaultData" type="INTEGER" value="255"/>
+                      <d:var name="SpiEbMaxLength" type="INTEGER" value="5"/>
+                      <d:var name="SpiAlignedBuffer" type="BOOLEAN" 
+                             value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiIbNBuffers" type="INTEGER" value="1">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiTransferStart" type="ENUMERATION" 
+                             value="MSB"/>
+                    </d:ctr>
+                  </d:lst>
+                  <d:lst name="SpiDemEventParameterRefs" type="MAP"/>
+                  <d:lst name="SpiExternalDevice" type="MAP">
+                    <d:ctr name="SpiExternalDevice_TT" type="IDENTIFIABLE">
+                      <d:ref name="SpiClockRef" type="REFERENCE" 
+                             value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_LCP0A"/>
+                      <d:var name="SpiBaudrate" type="FLOAT" value="200000.0">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@CALC</a:v>
+                          <a:v>@DEF</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="SpiEnableCs" type="BOOLEAN" value="true"/>
+                      <d:var name="SpiCsSelection" type="ENUMERATION" 
+                             value="CS_VIA_GPIO"/>
+                      <d:var name="SpiCsIdentifier" type="STRING" 
+                             value="DIO_MDO_SHIFT_RCK"/>
+                      <d:var name="SpiHwUnit" type="ENUMERATION" value="MFS00"/>
+                      <d:var name="SpiCsPolarity" type="ENUMERATION" value="LOW">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiDataShiftEdge" type="ENUMERATION" 
+                             value="LEADING"/>
+                      <d:var name="SpiShiftClockIdleLevel" type="ENUMERATION" 
+                             value="LOW"/>
+                      <d:var name="SpiTimeClk2Cs" type="FLOAT" value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiCsTimingClockDivider" type="ENUMERATION" 
+                             value="DIV1">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="SpiCsWaitTiming" type="ENUMERATION" 
+                             value="WAIT0">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="SpiSetupDelay" type="FLOAT" value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiHoldDelay" type="FLOAT" value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiDeselect" type="FLOAT" value="0.0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiUseFifo" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiUseDma" type="BOOLEAN" value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiDmaChannelRx" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiDmaChannelTx" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                    </d:ctr>
+                  </d:lst>
+                  <d:lst name="SpiJob" type="MAP">
+                    <d:ctr name="SpiJob_TT" type="IDENTIFIABLE">
+                      <d:var name="SpiHwUnitSynchronous" type="ENUMERATION" 
+                             value="SYNCHRONOUS">
+                        <a:a name="ENABLE" value="true"/>
+                      </d:var>
+                      <d:var name="SpiJobEndNotification" type="FUNCTION-NAME" 
+                             value=""/>
+                      <d:var name="SpiJobId" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:var name="SpiJobPriority" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:ref name="SpiDeviceAssignment" type="REFERENCE" 
+                             value="ASPath:/Spi/Spi/SpiDriver_0/SpiExternalDevice_TT"/>
+                      <d:lst name="SpiChannelList" type="MAP">
+                        <d:ctr name="SpiChannelList_0" type="IDENTIFIABLE">
+                          <d:var name="SpiChannelIndex" type="INTEGER" value="0">
+                            <a:a name="IMPORTER_INFO">
+                              <a:v>@DEF</a:v>
+                              <a:v>@CALC</a:v>
+                            </a:a>
+                          </d:var>
+                          <d:ref name="SpiChannelAssignment" type="REFERENCE" 
+                                 value="ASPath:/Spi/Spi/SpiDriver_0/SpiChannel_TT"/>
+                        </d:ctr>
+                      </d:lst>
+                    </d:ctr>
+                  </d:lst>
+                  <d:lst name="SpiSequence" type="MAP">
+                    <d:ctr name="SpiSequence_TT" type="IDENTIFIABLE">
+                      <d:var name="SpiInterruptibleSequence" type="BOOLEAN" 
+                             value="false">
+                        <a:a name="IMPORTER_INFO" value="@DEF"/>
+                      </d:var>
+                      <d:var name="SpiSeqEndNotification" type="FUNCTION-NAME" 
+                             value=""/>
+                      <d:var name="SpiSequenceId" type="INTEGER" value="0">
+                        <a:a name="IMPORTER_INFO">
+                          <a:v>@DEF</a:v>
+                          <a:v>@CALC</a:v>
+                        </a:a>
+                      </d:var>
+                      <d:lst name="SpiJobAssignment">
+                        <d:ref type="REFERENCE" 
+                               value="ASPath:/Spi/Spi/SpiDriver_0/SpiJob_TT"/>
+                      </d:lst>
+                    </d:ctr>
+                  </d:lst>
+                </d:ctr>
+              </d:lst>
+              <d:ctr name="SpiGeneral" type="IDENTIFIABLE">
+                <d:var name="SpiCancelApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiChannelBuffersAllowed" type="INTEGER" value="1"/>
+                <d:var name="SpiDevErrorDetect" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiHwStatusApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiInterruptibleSeqAllowed" type="BOOLEAN" 
+                       value="false">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiLevelDelivered" type="INTEGER" value="2">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiSupportConcurrentSyncTransmit" type="BOOLEAN" 
+                       value="false">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiVersionInfoApi" type="BOOLEAN" value="true">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiErrorCalloutFunction" type="FUNCTION-NAME" 
+                       value="ErrorCalloutHandler">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:lst name="SpiIncludeFile">
+                  <d:var type="STRING" value="ErrorCalloutHandler.h">
+                    <a:a name="IMPORTER_INFO" value="@DEF"/>
+                  </d:var>
+                  <d:var type="STRING" value="Spi_Cbk.h"/>
+                </d:lst>
+                <d:var name="SpiDmaErrorHandlingPolling" type="BOOLEAN" 
+                       value="false">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+                <d:var name="SpiDmaErrorNotification" type="FUNCTION-NAME" 
+                       value="">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+              </d:ctr>
+              <d:ctr name="SpiPublishedInformation" type="IDENTIFIABLE">
+                <d:var name="SpiMaxHwUnit" type="INTEGER" value="22">
+                  <a:a name="IMPORTER_INFO" value="@DEF"/>
+                </d:var>
+              </d:ctr>
+            </d:ctr>
+          </d:chc>
+        </d:lst>
+      </d:ctr>
+    </d:lst>
+  </d:ctr>
+
+</datamodel>

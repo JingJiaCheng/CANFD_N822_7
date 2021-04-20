@@ -1,0 +1,47 @@
+<?xml version='1.0'?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_4-0-3.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="DCE:04696AB1-FD37-4d2d-9064-09ED70CC1434">
+      <SHORT-NAME>TS_T32D3M1I0R0</SHORT-NAME>
+      <ELEMENTS>
+        <BSW-IMPLEMENTATION UUID="C8F7B090-357D-4225-96B2-3940FE4A5BC8">
+          <SHORT-NAME>ResourceImplementation</SHORT-NAME>
+          <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+          <SW-VERSION>1.0.30</SW-VERSION>
+          <VENDOR-ID>66</VENDOR-ID>
+          <AR-RELEASE-VERSION>4.0.3</AR-RELEASE-VERSION>
+          <BEHAVIOR-REF DEST="BSW-INTERNAL-BEHAVIOR">/TS_T32D3M1I0R0/BswDescr/Resource/ResourceBehavior</BEHAVIOR-REF>
+          <VENDOR-SPECIFIC-MODULE-DEF-REFS>
+            <VENDOR-SPECIFIC-MODULE-DEF-REF DEST="ECUC-MODULE-DEF">/TS_T32D3M1I0R0/Resource</VENDOR-SPECIFIC-MODULE-DEF-REF>
+          </VENDOR-SPECIFIC-MODULE-DEF-REFS>
+        </BSW-IMPLEMENTATION>
+      </ELEMENTS>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="9957F145-E01E-4a9e-A948-79722A09BCC9">
+          <SHORT-NAME>BswDescr</SHORT-NAME>
+          <ELEMENTS>
+            <BSW-MODULE-DESCRIPTION UUID="40079CEF-38A7-4761-8058-239DF84A4903">
+              <SHORT-NAME>Resource</SHORT-NAME>
+              <MODULE-ID>0</MODULE-ID>
+              <BSW-MODULE-DEPENDENCYS>
+              </BSW-MODULE-DEPENDENCYS>
+              <INTERNAL-BEHAVIORS>
+                <BSW-INTERNAL-BEHAVIOR UUID="4BE8E18B-2EA1-4e0a-9D4A-27BE5BEBC8ED">
+                  <SHORT-NAME>ResourceBehavior</SHORT-NAME>
+                  <EXCLUSIVE-AREAS>
+                  </EXCLUSIVE-AREAS>
+                  <ENTITYS>
+                  </ENTITYS>
+                  <EVENTS>
+                  </EVENTS>
+                </BSW-INTERNAL-BEHAVIOR>
+              </INTERNAL-BEHAVIORS>
+            </BSW-MODULE-DESCRIPTION>
+          </ELEMENTS>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>
