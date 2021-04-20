@@ -503,7 +503,7 @@ Std_ReturnType CanIf_Transmit( CAN_HWINST hwInst, PduIdType CanTxPduId, P2CONST(
 				/* Point to the Tx PDU config structure to fetch the details corresponding to the message */
 				pCanTxPduConfig = &CanDisp_TxPduConfig[CanTxPduId];
 
-				CanPduInfo.id = ((pCanTxPduConfig->CanIdOfTxPduConfig) | CAN_CONTROLLER_FD_ID_FLAG); //CAN FD @jchen57
+				CanPduInfo.id = pCanTxPduConfig->CanIdOfTxPduConfig;
 
 				CanPduInfo.length = PduInfoPtr->SduLength;
 
@@ -1146,7 +1146,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 
 			        TxCanPdu.length     =  CanTmD.Size;
 
-			        TxCanPdu.id         =  ((CanTmD.Identifier.I32) | CAN_CONTROLLER_FD_ID_FLAG); // CAN FD @jchen57
+			        TxCanPdu.id         =  CanTmD.Identifier.I32;
 
 
 	                TxCanPdu.sdu = TxBuffer;
@@ -1540,7 +1540,7 @@ void CanDisp_MainFunction( void )
 
 			                TxCanPduPtr->length =  CanTmD.Size;
 
-			                TxCanPduPtr->id     =  ((CanTmD.Identifier) | CAN_CONTROLLER_FD_ID_FLAG);
+			                TxCanPduPtr->id     =  CanTmD.Identifier;
 
 			                TxCanPduPtr->sdu    =  CanTmD.pData;
 
