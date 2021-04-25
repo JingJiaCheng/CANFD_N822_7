@@ -4538,6 +4538,13 @@
                           <d:var name="McuClockReferencePointFrequency" 
                                  type="FLOAT" value="5.8E7"/>
                         </d:ctr>
+                        <d:ctr name="McuClockReferencePoint_PLLOUT0" 
+                               type="IDENTIFIABLE">
+                          <d:var name="McuClock" type="ENUMERATION" 
+                                 value="MCU_RUN_CLK_PLLOUT0"/>
+                          <d:var name="McuClockReferencePointFrequency" 
+                                 type="FLOAT" value="4.8E8"/>
+                        </d:ctr>
                       </d:lst>
                       <d:ctr name="McuClockSettings" type="IDENTIFIABLE">
                         <a:a name="IMPORTER_INFO" value="ImpFromDavinci"/>
@@ -5381,10 +5388,7 @@
                                 <a:a name="UUID" 
                                      value="38091ef4-54cd-4b97-bec0-a9f34ed774c2"/>
                                 <d:var name="McuLcpClockDivision" 
-                                       type="ENUMERATION" value="MCU_CLK_DIV_4">
-                                  <a:a name="IMPORTER_INFO" 
-                                       value="ImpFromDavinci"/>
-                                </d:var>
+                                       type="ENUMERATION" value="MCU_CLK_DIV_4"/>
                                 <d:var name="McuLcpClockEnable" type="BOOLEAN" 
                                        value="true">
                                   <a:a name="IMPORTER_INFO" 

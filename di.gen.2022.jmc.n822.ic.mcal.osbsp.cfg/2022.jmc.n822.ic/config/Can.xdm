@@ -88,7 +88,33 @@
                           <d:var name="CanControllerSyncJumpWidth" 
                                  type="INTEGER" value="2"/>
                           <d:lst name="CanControllerFdBaudrateConfig" 
-                                 type="MAP"/>
+                                 type="MAP">
+                            <d:ctr name="CanControllerFdBaudrateConfig_0" 
+                                   type="IDENTIFIABLE">
+                              <d:var name="CanControllerFdBaudRate" 
+                                     type="INTEGER" value="2000"/>
+                              <d:var name="CanControllerPropSeg" type="INTEGER" 
+                                     value="0">
+                                <a:a name="IMPORTER_INFO" value="@DEF"/>
+                              </d:var>
+                              <d:var name="CanControllerSeg1" type="INTEGER" 
+                                     value="12"/>
+                              <d:var name="CanControllerSeg2" type="INTEGER" 
+                                     value="3"/>
+                              <d:var name="CanControllerSyncJumpWidth" 
+                                     type="INTEGER" value="2"/>
+                              <d:var 
+                                     name="CanControllerTrcvDelayCompensationOffset" 
+                                     type="INTEGER" value="0">
+                                <a:a name="ENABLE" value="false"/>
+                                <a:a name="IMPORTER_INFO" value="@DEF"/>
+                              </d:var>
+                              <d:var name="CanControllerTxBitRateSwitch" 
+                                     type="BOOLEAN" value="true">
+                                <a:a name="IMPORTER_INFO" value="@DEF"/>
+                              </d:var>
+                            </d:ctr>
+                          </d:lst>
                         </d:ctr>
                       </d:lst>
                       <d:lst name="CanFilterMask" type="MAP">
@@ -2894,10 +2920,8 @@
                   </d:var>
                 </d:ctr>
                 <d:ref name="CanBaudRateClockRef" type="REFERENCE" 
-                       value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_MAIN"/>
-                <d:var name="CanPrescalerValue" type="INTEGER" value="1">
-                  <a:a name="IMPORTER_INFO" value="@DEF"/>
-                </d:var>
+                       value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_PLLOUT0"/>
+                <d:var name="CanPrescalerValue" type="INTEGER" value="15"/>
                 <d:var name="CanErrorCalloutFunction" type="FUNCTION-NAME" 
                        value="ErrorCalloutHandler">
                   <a:a name="IMPORTER_INFO" value="@DEF"/>

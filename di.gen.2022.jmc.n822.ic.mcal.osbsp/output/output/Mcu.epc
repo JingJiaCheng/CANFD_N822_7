@@ -4114,6 +4114,20 @@
                         </FLOAT-VALUE>
                       </PARAMETER-VALUES>
                     </CONTAINER>
+                    <CONTAINER>
+                      <SHORT-NAME>McuClockReferencePoint_PLLOUT0</SHORT-NAME>
+                      <DEFINITION-REF>/TS_T32D3M1I0R0/Mcu/McuModuleConfiguration/McuClockSettingConfig/McuClockReferencePoint</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ENUMERATION-VALUE>
+                          <DEFINITION-REF>/TS_T32D3M1I0R0/Mcu/McuModuleConfiguration/McuClockSettingConfig/McuClockReferencePoint/McuClock</DEFINITION-REF>
+                          <VALUE>MCU_RUN_CLK_PLLOUT0</VALUE>
+                        </ENUMERATION-VALUE>
+                        <FLOAT-VALUE>
+                          <DEFINITION-REF>/TS_T32D3M1I0R0/Mcu/McuModuleConfiguration/McuClockSettingConfig/McuClockReferencePoint/McuClockReferencePointFrequency</DEFINITION-REF>
+                          <VALUE>4.8E8</VALUE>
+                        </FLOAT-VALUE>
+                      </PARAMETER-VALUES>
+                    </CONTAINER>
                     <CONTAINER UUID="41830f22-afc5-4fe8-a076-31fcf5661f0a">
                       <SHORT-NAME>McuClockSettings</SHORT-NAME>
                       <DEFINITION-REF>/TS_T32D3M1I0R0/Mcu/McuModuleConfiguration/McuClockSettingConfig/McuClockSettings</DEFINITION-REF>
