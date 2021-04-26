@@ -233,7 +233,7 @@
   /*    |      |    |    |    |      |    |    |    |      |     |      |       CONST(uint16, TYPEDEF) BaudrateConfigId; */\
   /*    |      |    |    |    |      |    |    |    |      |     |      |       |  */\
   /*    V      V    V    V    V      V    V    V    V      V     V      V       V  */\
-  {    4u,  500u,  2u, 12u,  3u,  TRUE,  2u, 12u,  3u,  TRUE, 255u,    1u,     0u }, /* Array index 0; CanFdBaudrateValue: 2000; deviation to configured nominal/data baudrate 0.0%/0.0%, deviation to configured TrcvDelayCompensation 0.0% */\
+  {    6u,  500u,  2u, 12u,  3u,  TRUE,  2u,  8u,  3u,  TRUE, 255u,    1u,     0u }, /* Array index 0; CanFdBaudrateValue: 4000; deviation to configured nominal/data baudrate 0.0%/0.0%, deviation to configured TrcvDelayCompensation 0.0% */\
 
 /** Pointer to the base address of the Message RAM. It must point to the hardware
     base address, even if the beginning of the message RAM is not used by this
@@ -533,7 +533,7 @@
   /*    |      |    |    |    |      |    |    |    |      |     |      |       CONST(uint16, TYPEDEF) BaudrateConfigId; */\
   /*    |      |    |    |    |      |    |    |    |      |     |      |       |  */\
   /*    V      V    V    V    V      V    V    V    V      V     V      V       V  */\
-  {    4u,  500u,  2u, 12u,  3u, FALSE,  0u,  0u,  0u, FALSE, 255u,    1u,     0u }, /* Array index 1; CanFdBaudrateValue:    0; deviation to configured nominal/data baudrate 0.0%/0.0%, deviation to configured TrcvDelayCompensation 0.0% */\
+  {    6u,  500u,  2u, 12u,  3u, FALSE,  0u,  0u,  0u, FALSE, 255u,    1u,     0u }, /* Array index 1; CanFdBaudrateValue:    0; deviation to configured nominal/data baudrate 0.0%/0.0%, deviation to configured TrcvDelayCompensation 0.0% */\
 
 /** Pointer to the base address of the Message RAM. It must point to the hardware
     base address, even if the beginning of the message RAM is not used by this
@@ -861,7 +861,7 @@
   .ClockSource = CAN_PRESCALER_SOURCE_PLL, /* CONST(uint8, TYPEDEF) */\
   \
   /* The value represents the clock prescaler division value. Allowed range: 1..64. */\
-  .Division = 15u, /* CONST(uint8, TYPEDEF) */\
+  .Division = 10u, /* CONST(uint8, TYPEDEF) */\
   \
   /* Base address of the CAN prescaler's registers. */\
   .RegisterBaseAddress = CAN_PRESCALER_BASE_ADDRESS /* CONST(uint32, TYPEDEF) */\

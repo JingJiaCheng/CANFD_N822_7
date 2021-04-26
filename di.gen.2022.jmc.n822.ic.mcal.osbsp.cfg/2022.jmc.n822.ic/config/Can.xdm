@@ -92,13 +92,13 @@
                             <d:ctr name="CanControllerFdBaudrateConfig_0" 
                                    type="IDENTIFIABLE">
                               <d:var name="CanControllerFdBaudRate" 
-                                     type="INTEGER" value="2000"/>
+                                     type="INTEGER" value="4000"/>
                               <d:var name="CanControllerPropSeg" type="INTEGER" 
                                      value="0">
                                 <a:a name="IMPORTER_INFO" value="@DEF"/>
                               </d:var>
                               <d:var name="CanControllerSeg1" type="INTEGER" 
-                                     value="12"/>
+                                     value="8"/>
                               <d:var name="CanControllerSeg2" type="INTEGER" 
                                      value="3"/>
                               <d:var name="CanControllerSyncJumpWidth" 
@@ -2921,7 +2921,7 @@
                 </d:ctr>
                 <d:ref name="CanBaudRateClockRef" type="REFERENCE" 
                        value="ASPath:/Mcu/Mcu/McuModuleConfiguration_0/McuClockSettingConfig_RUN/McuClockReferencePoint_PLLOUT0"/>
-                <d:var name="CanPrescalerValue" type="INTEGER" value="15"/>
+                <d:var name="CanPrescalerValue" type="INTEGER" value="10"/>
                 <d:var name="CanErrorCalloutFunction" type="FUNCTION-NAME" 
                        value="ErrorCalloutHandler">
                   <a:a name="IMPORTER_INFO" value="@DEF"/>

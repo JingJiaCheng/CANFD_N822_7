@@ -33,7 +33,7 @@ TRESOS2_ECU_ID        := Demo
 
 # list of all enabled modules (including modules, that are NOT
 # generated)
-PROJECT_MODULES       =  Make Resource EcuM Os Gpt Pwm Can Port Dio Fls Icu Wdg Base Adc Spi Mcu
+PROJECT_MODULES       =  Make Fls Icu Adc Gpt Wdg Dio Resource Pwm Port Spi Base Can Os EcuM Mcu
 
 # add tresos2 make plugin
 SOFTWARE_MODULES = tresos2
@@ -61,33 +61,33 @@ endif
 
 Make_VARIANT         := TS_T32D3M1I0R0
 
-Resource_VARIANT         := TS_T32D3M1I0R0
-
-EcuM_VARIANT         := TS_T0D1M4I3R0
-
-Os_VARIANT         := TS_T0D1M4I3R0
-
-Gpt_VARIANT         := TS_T32D3M1I0R0
-
-Pwm_VARIANT         := TS_T32D3M1I0R0
-
-Can_VARIANT         := TS_T32D3M1I1R0
-
-Port_VARIANT         := TS_T32D3M1I0R0
-
-Dio_VARIANT         := TS_T32D3M1I0R0
-
 Fls_VARIANT         := TS_T32D3M1I0R0
 
 Icu_VARIANT         := TS_T32D3M1I0R0
 
+Adc_VARIANT         := TS_T32D3M1I1R0
+
+Gpt_VARIANT         := TS_T32D3M1I0R0
+
 Wdg_VARIANT         := TS_T32D3M1I0R0
+
+Dio_VARIANT         := TS_T32D3M1I0R0
+
+Resource_VARIANT         := TS_T32D3M1I0R0
+
+Pwm_VARIANT         := TS_T32D3M1I0R0
+
+Port_VARIANT         := TS_T32D3M1I0R0
+
+Spi_VARIANT         := TS_T32D3M1I1R0
 
 Base_VARIANT         := TS_T32D3M1I0R0
 
-Adc_VARIANT         := TS_T32D3M1I1R0
+Can_VARIANT         := TS_T32D3M1I1R0
 
-Spi_VARIANT         := TS_T32D3M1I1R0
+Os_VARIANT         := TS_T0D1M4I3R0
+
+EcuM_VARIANT         := TS_T0D1M4I3R0
 
 Mcu_VARIANT         := TS_T32D3M1I0R0
 
