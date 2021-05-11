@@ -1,0 +1,70 @@
+
+CMP_NAME := $(strip $(CMP_NAME))
+$(info )
+$(info ====== make <$(MAKECMDGOALS)> for Component <<$(CMP_NAME)>> ======)
+CMP_DIR  := $(strip $(CMP_DIR))
+DIR_EXCLUDE := $(strip $(DIR_EXCLUDE))
+
+USE_FILES_LIST := $(strip $(USE_FILES_LIST))
+
+# USE_FILES_LIST and SRC_EXCLUDE are mutually exclusive. You can use only one of them at a time
+# If some DIR is excluded with DIR_EXCLUDE, you cannot use USE_FILES_LIST for files in it.
+
+ifneq ($(SRC_EXCLUDE),*)
+
+#check correct path for find. Tool used is from Mingw MSYS package !
+tmp := $(shell if [ ! -f "$(FIND_TOOL)" ]; then echo MISSING; fi)
+ifeq ($(tmp),MISSING)
+$(error #$(FIND_TOOL) not found! Cannot find source files!)
+endif
+#much faster than sed with regex
+DDD := $(foreach ExDir, $(DIR_EXCLUDE), -name $(ExDir) -prune -o )
+DIRS := $(strip $(shell $(FIND_TOOL) $(CMP_DIR) -type d  ! \( $(DDD) -name Documents -prune \) -print))
+
+
+#this takes about 10s for hmi_app component
+#ifneq ($(DIR_EXCLUDE),)
+#DIRS := $(foreach pth, $(DIRS), $(shell echo '$(pth)' | sed -e '/[^ ]*\/$(DIR_EXCLUDE)\/[^ ]*/d' -e '/[^ ]*\/$(DIR_EXCLUDE)/d'))
+#DIRS := $(shell echo '$(DIRS)' | awk '{gsub(/[a-zA-Z0-9/:_\.\-]*\/$(DIR_EXCLUDE)\/[a-zA-Z0-9/:_\.\-]*/,""); gsub(/[a-zA-Z0-9/:_\.\-]*\/$(DIR_EXCLUDE)/, "")}; 1')
+#endif
+
+#$(info 'Dirs =' $(DIRS) )
+export SRC_EXCLUDE OBJDIR CMP_NAME CC CFLAGS DEFINES INCLUDES USE_FILES_LIST INC_LOCAL
+
+$(OBJDIR)/$(CMP_NAME).a : $(DIRS)
+	echo 'Updating library: $@'
+	cd $(OBJDIR)/$(CMP_NAME) && $(AR) $(ARFLAGS) -o $@ *.o
+
+$(DIRS):
+	$(MAKE) -f rules.subdir DIR=$@ mkall 
+
+
+#compiledirsrc :
+#	-@for i in $(DIRS); do \
+#		$(MAKE) -f rules.subdir DIR=$$i || break; \
+#	done
+
+
+create_dir :
+	if [ ! -d "$(OBJDIR)/$(CMP_NAME)" ] ; then mkdir --mode=0777 -p $(OBJDIR)/$(CMP_NAME) ; fi
+
+
+clean : 
+	if [ -d "$(OBJDIR)/$(CMP_NAME)" ] ; then rm -fr $(OBJDIR)/$(CMP_NAME) ; fi 
+	if [ -f "$(OBJDIR)/$(CMP_NAME).a" ] ; then rm -f  $(OBJDIR)/$(CMP_NAME).* ; fi 
+
+all : create_dir $(OBJDIR)/$(CMP_NAME).a
+
+rebuild : 
+	$(error 'First "clean" and then build "all" instead of this target.')
+
+else
+# All source files excluded, nothing to do!
+
+all : ;
+rebuild : ;
+clean : ;
+
+endif
+
+.PHONY : clean all rebuild create_dir $(DIRS)

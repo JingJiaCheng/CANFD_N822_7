@@ -1,0 +1,16 @@
+#!gbuild
+[Select One]
+ind_mset.c
+	-noga
+	-Ospeed
+	-Onounroll
+ind_mset.68		[Assembly]
+ind_mset.sh		[Assembly]
+ind_mset.spa		[Assembly]
+ind_mset.sc		[Assembly]
+{!isdefined(GHS_DATATRACE)} ind_mset.ppc [Assembly]
+ind_mset.arm		[Assembly]
+ind_mset.thm		[Assembly]
+ind_mset.bf		[Assembly]
+ind_mset.tri		[Assembly]
+ind_mset.800		[Assembly]

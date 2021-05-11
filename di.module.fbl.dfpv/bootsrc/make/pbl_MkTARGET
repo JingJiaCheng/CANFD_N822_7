@@ -1,0 +1,136 @@
+
+#----------------------------------------------------------------------------------------
+#   Includes
+#----------------------------------------------------------------------------------------
+include pbl_global.in
+# include this file for "gfxprebuild" target 
+# include CXDR_GFX_prebuild.in
+
+#----------------------------------------------------------------------------------------
+#	Common settings
+#----------------------------------------------------------------------------------------
+#  GEN2 STARTUP_CODE := $(OBJDIR)/Os/V850-interruptvectors.o $(OBJDIR)/Os/V850-exceptionvectors.o
+
+LinkerFileName       := standalone_romrun_pbl_small.ld
+LD := -map $(PRJDIR_Build)/tgt/$(LinkerFileName)
+
+#LFLAGS += -v 
+
+ifeq ($(MAKE_JOBS_TO_USE), 1)
+	MAX_JOBS_TO_USE := 1
+else
+    # calculate MAX number of parallel jobs that can be run. This value is optimal but can be lowered if needed.
+	MAX_JOBS_TO_USE :=$(shell echo $$(($(MAKE_JOBS_TO_USE)*2)))
+endif
+#----------------------------
+# Libraries to link
+#----------------------------
+EXT_LIB := -L \
+$(PRJDIR_Build)/obj/libstartup.a 
+#$(PROJDIR)/di.module.gdtcdd.diagnostics/lib/amber/arm-none-ghs_S6J326C_S6J32DA/debug/libutil.a \
+#$(PROJDIR)/di.module.gdtcdd.diagnostics/lib/amber/arm-none-ghs_S6J326C_S6J32DA/debug/libfreetype.a \
+#$(PROJDIR)/di.module.gdtcdd.diagnostics/lib/amber/arm-none-ghs_S6J326C_S6J32DA/debug/libbasic_graphics.a
+
+
+#----------------------------------------------------------------------------------------
+#	Specific settings for DEBUG
+#----------------------------------------------------------------------------------------
+ifeq ($(cfg),Target_Debug)
+
+SREC_NAME := pbl
+
+PREP_TARGET := prep_target_exec
+
+endif
+
+
+# This magic recipe will take and sort all *.mk files case insensitive
+ifneq ($(MAKECMDGOALS),clean)
+ifeq ($(MAKEPARALLEL),false)
+MK_FILES_TMP := $(notdir $(wildcard pbl.mk LibStartUp.mk BrdMemInit.mk))
+MK_FILES := $(shell echo $(MK_FILES_TMP) | tr ' ' '\n' | $(SORT_TOOL) -f | tr '\n' ' ' )
+#$(error "MK_FILES=" $(MK_FILES))
+else
+MK_FILES :=
+endif
+endif
+
+#--- END CONFIG SECTION -----------------------------------------------------------------
+
+
+$(OBJDIR)/$(EXEC_DIR)/$(EXEC_NAME).elf : start_builds $(MK_FILES) MakeLinkList $(LIBS_TO_LINK)
+	$(info )
+	$(info Linking executable: $@)
+	cd $(OBJDIR) && $(LINK) $(LD)  $(LFLAGS) $(INCLUDES) $(EXT_LIB) $(STARTUP_CODE) $(OPBYTES) $(LIBS_TO_LINK)  -o $@
+MakeLinkList : start_builds $(MK_FILES)
+	$(eval LIBS_TO_LINK_TMP := $(sort $(notdir $(wildcard $(OBJDIR)/*.a))))
+	$(eval LIBS_TO_LINK := $(addprefix $(OBJDIR)/, $(LIBS_TO_LINK_TMP)))
+	$(info )
+	$(info "Libs that will be linked: $(LIBS_TO_LINK)")
+
+$(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME).srec : $(OBJDIR)/$(EXEC_DIR)/$(EXEC_NAME).elf
+	echo 'making srec file: $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME).srec'
+	$(SREC) -h $^ -o $@
+
+	
+ifeq ($(MAKEPARALLEL),false)
+
+$(MK_FILES): 
+	$(MAKE) --jobs=$(MAX_JOBS_TO_USE) -f $@ cfg=$(cfg) all;
+
+start_builds : ;
+else
+start_builds : 
+	$(MAKE) --jobs=$(MAX_JOBS_TO_USE) -f build_cmd.make cfg=$(cfg) all
+
+$(MK_FILES) : ;
+
+endif
+
+
+$(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME)_rec.tmp : $(OBJDIR)/$(EXEC_DIR)/$(EXEC_NAME).elf
+	echo 'Making SREC with option bytes for release'
+	$(SREC) $(OBJDIR)/$(EXEC_DIR)/$(EXEC_NAME).elf $(SFLAGS) -fill1 0x00000000 0x2FFFFF 0xFF -fill1 0x02000000 0x02007FFF 0xFF -start 0x00000000 -end 0xF4000000 -o $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME)_rec.tmp
+
+
+prep_target_OB : $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME)_rec.tmp
+	cp $(PRJDIR_Build)/Target/header_rec.rec  $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME)_OB.srec  && cat $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME)_rec.tmp >> $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME)_OB.srec 
+
+fill_unused_internal_flash : $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME).srec
+	echo 'Fill unused internal flash with a specific pattern to make SW reset ... '
+	$(TRANSFOR) @$(CmdFile_FILL_UNUSED_FLASH)
+
+# The following targets are executed only in Release configuration :
+
+compress_ext_const : $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME).srec
+	echo 'Compressing constants for external flash...'
+	$(JCICOMPRESS) $(COMPRESSION_OPT) /src_file:$(SRC_FILEConst) /dest_file:$(DEST_FILEConst)
+
+compress_ext_code : $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME).srec
+	echo 'Compressing code for external flash...'
+	$(JCICOMPRESS) $(COMPRESSION_OPT) /src_file:$(SRC_FILECode) /dest_file:$(DEST_FILECode)
+
+compress_target_exec : $(OBJDIR)/$(EXEC_DIR)/$(SREC_NAME).srec
+	echo 'Creating Target.jdf ...'
+	$(TRANSFOR) @$(CmdFile_TARGET)
+	echo 'Compressing executable for target...'
+	$(JCICOMPRESS) $(COMPRESSION_OPT) /src_file:$(SRC_FILE) /dest_file:$(DEST_FILE)
+
+clean :
+	echo "$(OBJDIR)//pbl"
+	if [ -d "$(OBJDIR)/pbl" ] ; then rm -fr $(OBJDIR) ; fi
+
+
+create_objdir :
+	if [ ! -d "$(OBJDIR)" ] ; then mkdir --mode=0777 -p $(OBJDIR) ; fi
+
+all : create_objdir start_builds $(MK_FILES) MakeLinkList  $(OBJDIR)/$(EXEC_DIR)/$(EXEC_NAME).elf $(PREP_EXT_FLASH) $(PREP_TARGET)
+
+.NOTPARALLEL : 
+
+rebuild : 
+	$(error 'First "clean" and then build "all" instead of this target.')
+
+.PHONY : start_builds $(MK_FILES) clean all rebuild prep_ext_const gfxprebuild prep_ext_code compress_ext_const compress_ext_code prep_target_exec compress_target_exec prep_target_OB prep_ext_flash_srec  create_objdir 
+
+

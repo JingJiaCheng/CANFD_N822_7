@@ -1,0 +1,57 @@
+/*
+*
+*                Language Independent Library
+*
+*       Copyright 1983-2000 Green Hills Software,Inc.
+*
+*  This program is the property of Green Hills Software, Inc,
+*  its contents are proprietary information and no part of it
+*  is to be disclosed to anyone except employees of Green Hills
+*  Software, Inc., or as agreed in writing signed by the President
+*  of Green Hills Software, Inc.
+*
+*/
+
+	.file	"ind_reset.arm"
+
+	.section ".reset", "ax"
+
+/* NOT IMPLEMENTED - TAILOR FOR YOUR TARGET */
+/* THIS CODE DOES NOT WORK YET */
+
+	.weak __ghsbegin_robase
+	.weak __ghs_rambootcodestart
+	.weak __ghs_rombootcodestart
+
+#ifdef __THUMB
+	.thumb
+#endif
+	.dtinst
+	.globl __ghs_reset_handler
+__ghs_reset_handler:
+	ldr	r4, pool_addrs
+	ldr	r5, [r4, 4]	; __ghs_rambootcodestart
+	ldr	r6, [r4, 8]	; __ghs_rombootcodestart
+	ldr	r7, [r4, 12]	; _start
+
+	cmp	r6, r7		; rombootcodestart < _start ?
+	bcs	done
+	add	r7, r7, r6
+	sub	r7, r7, r5
+done:
+	mov	pc, r7
+	.type __ghs_reset_handler,$function
+	.size __ghs_reset_handler,.-__ghs_reset_handler
+#ifdef __ghs_asm
+	.fsize __ghs_reset_handler, 0-4
+	.scall __ghs_reset_handler, 0
+#endif /* __ghs_asm */
+	.align 4
+pool_addrs:
+	.data.w pool_addrs
+	.data.w __ghs_rambootcodestart
+	.data.w __ghs_rombootcodestart
+	.data.w _start	
+	.nodtinst
+	.type pool_addrs,$object
+	.size pool_addrs,12

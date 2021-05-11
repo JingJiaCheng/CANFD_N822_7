@@ -1,0 +1,32 @@
+target_connection {
+     {
+        title = "Generic-ARM Cortex-R5 with Simulator for ARM (simarm)"
+        type = "Simulator for ARM (simarm)"
+        short_type = "simarm"
+        args = " -cpu=cortexr5   "
+        command = "simarm -cpu=cortexr5   "
+        logfile = "simarm"
+        mode = ""
+        setup_script = ""
+        run_mode_partner = ""
+        run_mode_policy = ""
+        sane = "no"
+        log = "no"
+        timestamp = "0"
+    }
+     {
+        title = "GHS_Debug_Probe_USB"
+        type = "Green Hills Debug Probe (mpserv)"
+        short_type = "mpserv"
+        args = "  -usb 0"
+        command = "mpserv  -usb 0"
+        logfile = ""
+        mode = ""
+        setup_script = ""
+        run_mode_partner = ""
+        run_mode_policy = ""
+        sane = "yes"
+        log = "no"
+        timestamp = "0"
+    }
+}

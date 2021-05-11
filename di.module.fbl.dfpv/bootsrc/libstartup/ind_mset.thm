@@ -1,0 +1,13 @@
+@			ind_mset.thm
+@
+@	ARM memset routine.
+@
+@	Copyright (C) 1999-2009 Green Hills Software, Inc.
+@
+@	This program is the property of Green Hills Software, Inc.  Its contents
+@	are proprietary information and no part of it is to be disclosed to
+@	anyone except employees of Green Hills Software, Inc., or as agreed
+@	in writing signed by the President of Green Hills Software, Inc.
+
+#include "ind_mset.arm"
+

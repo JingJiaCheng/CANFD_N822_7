@@ -1,0 +1,69 @@
+//---------------------------------------------------------------------------------------------------------------------
+//
+// VISTEON CORPORATION CONFIDENTIAL
+// ________________________________
+//
+// [2015] Visteon Corporation
+// All Rights Reserved.
+//
+// NOTICE: This is an unpublished work of authorship, which contains trade secrets.
+// Visteon Corporation owns all rights to this work and intends to maintain it in confidence to preserve
+// its trade secret status. Visteon Corporation reserves the right, under the copyright laws of the United States
+// or those of any other country that may have jurisdiction, to protect this work as an unpublished work,
+// in the event of an inadvertent or deliberate unauthorized publication. Visteon Corporation also reserves its rights
+// under all copyright laws to protect this work as a published work, when appropriate.
+// Those having access to this work may not copy it, use it, modify it, or disclose the information contained in it
+// without the written authorization of Visteon Corporation.
+//
+//---------------------------------------------------------------------------------------------------------------------
+
+    .file   "Brd-Mem-Init.arm"
+    .section ".syscall", "ax"
+    .thumb
+    .import __ghs_ramend
+    .global __ghsautoimport_BrdMemInit
+    .weak   __ghs_board_memory_init
+    .global __ghs_board_memory_init
+
+//=====================================================================================================================
+//  CONSTANTS & TYPES
+//=====================================================================================================================
+
+//=====================================================================================================================
+//  FORWARD DECLARATIONS
+//=====================================================================================================================
+
+//=====================================================================================================================
+//  PRIVATE
+//=====================================================================================================================
+
+//=====================================================================================================================
+//  PUBLIC
+//=====================================================================================================================
+
+//---------------------------------------------------------------------------------------------------------------------
+/// @brief  Procedure to initialize SDRAM if code is running from flash. Specific to Kepler2 BLD1 HW board.
+///
+/// @return None:           Procedure does not return any value !
+//---------------------------------------------------------------------------------------------------------------------
+
+__ghs_board_memory_init:
+    ldr r0, Addr_TCRAM_End ; Fetch TCRAM end address
+    ;lsr r0, r0, #1  ; Process only half of TCRAM (SpeedUp)
+    mov r2, #0 ; Clear value
+Loop:
+    sub r0, r0, #4 ; Calculate next address
+    str r2, [r0] ; Write 32-bit value to force ECC bits calculation
+    cmp r0, #0 ; Check if TCMRAM start is reached
+    bne Loop
+    ret ; End of procedure
+
+    .align 4
+Addr_TCRAM_End:
+    DCD __ghs_ramend  ; End of TCMRAM area for Kepler 2 BLD1 board
+
+    .type   __ghs_board_memory_init,$function
+    .size   __ghs_board_memory_init,.-__ghs_board_memory_init
+    .fsize  __ghs_board_memory_init, -4
+    .scall	__ghs_board_memory_init,__leaf__
+

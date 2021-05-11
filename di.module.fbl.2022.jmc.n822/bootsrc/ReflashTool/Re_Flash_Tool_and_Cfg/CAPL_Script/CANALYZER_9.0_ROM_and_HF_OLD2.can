@@ -1,0 +1,1270 @@
+/*@!Encoding:1252*/
+/*******************************************************************************************
+********************************************************************************************
+	Created Date : 03-15-18
+	Created From : CoC OS BSP Team
+	
+	Procedure to be followed
+	========================
+	Step 1 :: Start the CANoe software 
+	STEP 2 :: Press any Two key as mentioned below to do the respective operation
+    Press Key 'P' to start from Programming Session
+      |
+      |
+      |-->Press Key '1' to Erase and Re-Flash(Internal ROM Memory and Hyper Flash Memory )
+		  |-->Press Key '2' to Erase and Re-Flash(Internal ROM Memory )
+		  |-->Press Key '3' to Erase and Re-Flash(Hyper Flash Memory )
+      
+    Press Key 'E' to start from Extended Diagnostic Session
+      |
+      |
+      |-->Press Key '1' to Erase and Re-Flash(Internal ROM Memory and Hyper Flash Memory )
+		  |-->Press Key '2' to Erase and Re-Flash(Internal ROM Memory )
+		  |-->Press Key '3' to Erase and Re-Flash(Hyper Flash Memory )
+      
+	Flashing Completed.
+	
+	To Restart the flasing again , Stop the CANoe software if it is running. Then follow from STEP 1
+	
+********************************************************************************************		
+********************************************************************************************/
+variables
+{
+  /*China D53 Program Specific - start*/
+  dword KEY_MASK = 0x8EACBA9F;
+	dword seedKey = 0;
+	byte bitLoop = 0;
+  
+	byte SecureAccessSeed[4];
+	byte  seedkey_success                     = 0;
+	
+  /*China D53 Program Specific - start*/
+    const  ADDR_AND_LENGTH_SIZE_IN_BYTES     =0x44;
+    const  NORMAL_BLOCK                      = 1;
+    const  LAST_BLOCK                        = 2;
+    byte  ChecksumRoutine_Flag              = NORMAL_BLOCK;
+    byte  CHECKSUM_AREA_SIZE                = 4;
+	byte  Sec_Error_Count                     = 0;
+          
+  dword fbl_calc_chksum                     = 0;
+	const TRUE = 1;
+	const FALSE = 0;
+    
+	byte  Task_State;
+	byte  diag_resp_rcvd;
+	byte  diag_resp_sf[8];
+	
+	byte  tp_first                            = 0;
+	byte  tp_first_frame                      = 0;
+	byte  diag_req_buff[4095];
+	byte  chk_buff[4095];
+
+	dword rom_handle,hf1_handle,chk1;
+ 
+	int   diag_req_len;
+    int   i                                   = 0;
+	int   tp_data_len_txd;
+	byte  diag_req_cmnd;
+  
+  const ROM_AND_HF                          = 1;
+  const ROM_ONLY                            = 2;
+  const HF_ONLY                             = 3;
+  
+/*Enter Idel Task when flashing is done*/
+	const IDLE                                = 1;
+  
+/*Request Tester Present and Validate tester present Response */  
+	const TESTER_MSG_REQ                      = 2;
+	const TESTER_MSG_VAL                      = 3;
+  
+/*1*//*Request Extended Diagnostic Session and Validate Extended diagnostic session*/
+	const EXT_SESS_REQ                        = 4;
+	const EXT_SESS_VAL                        = 5;
+  
+/*2*//*Request Disable DTC and Validate Disable DTC Response*/
+	const DIS_FAULTCOD_REQ                    = 6;
+	const DIS_FAULTCOD_VAL                    = 7;
+/*3*//*Request Disable Normal message and validate disable normal message response*/
+	const DIS_NRMSGTX_REQ                     = 8;
+	const DIS_NRMSGTX_VAL                     = 9;
+  
+/*4*//*Request Programming Diagnostic Session and Validate Programming diagnostic session*/	 
+	const PRG_SESS_REQ                        = 10;
+	const PRG_SESS_VAL                        = 11;
+  
+/*5*//*Request SEED & KEY and validate SEED and KEY response*/    
+	const SEC_SEED_REQ                        = 12;
+	const SEC_SEED_VAL                        = 13;
+	const SEC_KEY_VAL                         = 14;
+  
+/*6.1*//*Erase Internal Application Flash*/
+	const MEM_ERASE_ROM_REQ                   = 16;
+	const MEM_ERASE_ROM_VAL                   = 17;
+/*7.1*//*Request Download and validate Request Download Response*/
+	const REQ_DWNLOAD_ROM                     = 18;
+	const REQ_DWNLOAD_ROMVAL                  = 19;
+/*8.1*//*Data Transfer and validate data transfer Response*/
+	const TRSFR_DATA_ROM                      = 20;
+	const TRSFR_DATA_ROMVAL                   = 21;
+/*9.1*//*Transfer data exit and validate Transfer data exit Response*/
+	const TRSFR_EXIT_ROM                      = 22;
+	const TRSFR_EXIT_ROM_VAL                  = 23;
+/*10.1*//*Request routine control and validate Routine control Response*/
+	const CHECKSUM_ROM                        = 24;
+	const CHECKSUM_ROM_VAL                    = 25;
+  
+/*6.2*//*Erase Internal Application Flash*/
+	const MEM_ERASE_HF1_REQ                   = 26;
+	const MEM_ERASE_HF1_VAL                   = 27;
+/*7.2*//*Request Download and validate Request Download Response*/
+	const REQ_DWNLOAD_HF1                     = 28;
+	const REQ_DWNLOAD_HF1VAL                  = 29;
+/*8.2*//*Data Transfer and validate data transfer Response*/
+	const TRSFR_DATA_HF1                      = 30;
+	const TRSFR_DATA_HF1VAL                   = 31;
+/*9.2*//*Transfer data exit and validate Transfer data exit Response*/
+	const TRSFR_EXIT_HF1                      = 32;
+	const TRSFR_EXIT_HF1_VAL                  = 33;
+/*10.2*//*Request routine control and validate Routine control Response*/
+	const CHECKSUM_HF1                        = 34;
+	const CHECKSUM_HF1_VAL                    = 35;
+
+/*11*//*Request Power on reset and validate power on reset Response*/
+	const PON_RESET_REQ                       = 36;
+	const PON_RESET_VAL                       = 37;
+  
+    byte  block_seq_counter                   = 0;
+	dword app_size_counter                    = 0;
+	word  app_size_counter_val                = 0;
+	word  app_size_counter_bal                = 0;
+  
+  byte  Flashing_Sequence_Type              = 0;
+  byte  Flashing_Section_Type               = 0;
+
+	mstimer Task;
+  mstimer tester_time;
+  mstimer po_res;
+	mstimer tp_cf_dly;
+  message 0x738 diag_res;
+	message 0x730 diag_req;
+	message 0x7DF tester_req; 
+   
+  dword ROM_NO_OF_BLOCK                     = 0x00;
+  dword ROM_NO_OF_BLOCK_FOR_VALIDATION      = 0x00; 
+  word  ROM_NO_OF_REMAINING_BYTES           = 0x00;
+  dword ROM_DATA_APP_SIZE_COUNTER_LIMIT     = 0x00;
+  dword ROM_DATA_VAL_APP_SIZE_COUNTER_LIMIT = 0x00;
+  
+  dword HF1_NO_OF_BLOCK                     = 0x00;
+  dword HF1_NO_OF_BLOCK_FOR_VALIDATION      = 0x00;
+  word  HF1_NO_OF_REMAINING_BYTES           = 0x00;
+  dword HF1_DATA_APP_SIZE_COUNTER_LIMIT     = 0x00;
+  dword HF1_DATA_VAL_APP_SIZE_COUNTER_LIMIT = 0x00;
+  
+  /*Configure the below for no of bytes in a block*/  
+  word  NO_OF_BYTES_IN_A_BLOCK              = 0x100;
+  
+  /*Configure the below 3 variable for ROM*/  
+  dword ROM_FILE_START_ADDRESS              = 0x01A00000;
+  //dword ROM_FILE_LENGTH                     = 0x1000;  
+  dword ROM_FILE_LENGTH                     = 0x200000;
+  byte  ROM_COMPRESS_DATA                   = 0x00;  /*compress - 0x10   Non-Compress - 0x00*/
+  /*Configure the below 3 variable for HF1*/        
+  dword HF1_FILE_START_ADDRESS              = 0x48000000;
+  dword HF1_FILE_LENGTH                     = 0x96A2D3;
+  byte  HF1_COMPRESS_DATA                   = 0x10;  /*compress - 0x10   Non-Compress - 0x00*/
+ 
+  /*Configure this value to test fail case of seed and key*/
+  /*Valid only for China D53 */ 
+  byte NFFA_COUNT                           = 0x00; 
+  
+  //char  ROM_File_Name[100]                  = "./Files/ROM_11CDCCCC.bin";
+  char  ROM_File_Name[100]                  = "./Sample_ROM_and_HF_Files/PROGRAM_COMPRESS_ONLY.bin";
+  char  HF1_File_Name[100]                  = "./Sample_ROM_and_HF_Files/PROGRAM_COMPRESS_ONLY_CAPL.bin";  
+}  
+on message 0x738    
+{ 
+
+  diag_resp_sf[0] = this.byte(0);
+  diag_resp_sf[1] = this.byte(1);
+  diag_resp_sf[2] = this.byte(2);
+  diag_resp_sf[3] = this.byte(3);
+  diag_resp_sf[4] = this.byte(4);
+  diag_resp_sf[5] = this.byte(5);
+  diag_resp_sf[6] = this.byte(6);
+  diag_resp_sf[7] = this.byte(7);
+
+  diag_resp_rcvd = TRUE;
+
+  if((diag_resp_sf[0] == 0x30)&&(tp_first_frame == 1))
+  {
+    canceltimer(tp_cf_dly);
+    settimer(tp_cf_dly, 1);
+    tp_first = 1;
+    tp_first_frame = 0;
+  }
+  if((diag_resp_sf[0] == 0x10) || (diag_resp_sf[0] == 0x11))
+  {
+    diag_req.byte(0) = 0x30;
+    diag_req.byte(1) = 0x00;      
+    diag_req.byte(2) = 0x00;      
+    diag_req.byte(3) = 0x00;             
+    diag_req.byte(4) = 0x00;
+    diag_req.byte(5) = 0x00;
+    diag_req.byte(6) = 0x00;
+    diag_req.byte(7) = 0x00;
+
+    output(diag_req);
+  }    
+}
+on busOff
+{
+//	resetCan();
+}
+on start
+{ 
+  ROM_NO_OF_BLOCK			          = (ROM_FILE_LENGTH/0x100);
+  ROM_NO_OF_REMAINING_BYTES		  = (ROM_FILE_LENGTH%0x100);
+  
+  HF1_NO_OF_BLOCK			          = (HF1_FILE_LENGTH/0x100);
+  HF1_NO_OF_REMAINING_BYTES		  = (HF1_FILE_LENGTH%0x100);
+  
+  ROM_NO_OF_BLOCK_FOR_VALIDATION = ROM_NO_OF_BLOCK;
+  HF1_NO_OF_BLOCK_FOR_VALIDATION = HF1_NO_OF_BLOCK;
+
+
+  if(ROM_NO_OF_REMAINING_BYTES != 0)
+    ROM_NO_OF_BLOCK_FOR_VALIDATION += 1;
+  if(HF1_NO_OF_REMAINING_BYTES != 0)
+    HF1_NO_OF_BLOCK_FOR_VALIDATION += 1;
+  
+  Settimer(Task, 2);
+  
+  Task_State      = IDLE;
+  diag_resp_rcvd  = FALSE;
+ 
+  write("*********************************************");
+  write(" China D53 CAN Re-Flash Tool    "); 
+  write(" Please select the Re-flash Options ");
+  write(" Press Either Key 'P' or 'E' For China D53 Re-flash Sequence to initiate");
+  write("Key 'P' or 'p' from Boot Mode / Programmming Session ");
+  write("Key 'E' or 'e' from Application Mode / Extended Diagnistic Session ");
+  
+  write("*********************************************");
+}
+ 
+on key *
+{
+  if(Flashing_Section_Type == FALSE)
+  {
+    /*  Select it as Programming Session */
+    if((this == 'p')||(this == 'P'))
+    {
+      write("China D53: Boot Mode Re-Flash Sequence Started From Programmming Session...");
+      Flashing_Sequence_Type = 1;
+      Notification_Function();
+    }
+    /*  Select it as Extended diagnostic Session */
+    else if((this == 'e')||(this == 'E'))
+    { 
+      write("China D53: App Mode  Re-Flash Sequence Started from Extended Diagnistic Session...");
+      Flashing_Sequence_Type = 2;
+      Notification_Function();
+    }
+    else
+    {
+      if(Flashing_Sequence_Type != FALSE)
+      {
+        switch((byte)this)
+        {
+          case '1': Flashing_Section_Type = ROM_AND_HF; Start_ReFlash_Execution();break;
+          case '2': Flashing_Section_Type = ROM_ONLY;   Start_ReFlash_Execution();break;
+          case '3': Flashing_Section_Type = HF_ONLY;    Start_ReFlash_Execution();break;
+          default:break;
+        }
+      }
+    }
+  }
+}
+void Notification_Function(void)
+{
+  write("Press Key '1' - Erase and ReProgram ROM(Internal Flash) and Hyper Flash(External Flash Memory)");
+  write("Press Key '2' - Erase and ReProgram ROM(Internal Flash) Only");
+  write("Press Key '3' - Erase and ReProgram Hyper Flash(External Flash Memory) Only");   
+}
+void Start_ReFlash_Execution(void)
+{
+  switch(Flashing_Sequence_Type)
+  {
+    case 1:Task_State = PRG_SESS_REQ;break;
+    case 2:Task_State = EXT_SESS_REQ;break;
+    default:break;
+  }
+}
+TP_Transmit()
+{
+  byte i;
+  byte tx_valid = TRUE;
+  diag_req.CAN = 1;
+  diag_req.DLC = 8;    
+
+  if((diag_req_len <8)&&(diag_req_len >0))
+  {
+    diag_req.byte(0) = diag_req_len;
+    for(i = 0; i < diag_req_len; i++)
+    {
+        diag_req.byte(i+1) = diag_req_buff[i];
+    }
+    for(i = diag_req_len; i < 7; i++)
+    {
+        diag_req.byte(i+1) = 0x00;
+    }
+  }
+  else
+  {
+    if(diag_req_len > 4095)
+    { 
+      tx_valid = FALSE;
+    }
+    else
+    {
+      diag_req.byte(0) = (0x10 | (diag_req_len >> 8));
+      diag_req.byte(1) = (diag_req_len);
+      tp_data_len_txd  = 0;
+      diag_req.byte(2) = diag_req_cmnd;
+
+      tp_first_frame = 1;
+
+      for(i = 0; i < 5; i++)
+      {
+        diag_req.byte(i+3) = diag_req_buff[i];
+        tp_data_len_txd++;
+      }
+      diag_req_len -= 6;
+    }
+  }
+  
+  diag_resp_rcvd = FALSE;
+
+  if(tx_valid == TRUE)
+  {   
+    output(diag_req);
+  }
+  else
+  {}
+}
+task_idle ()
+{
+
+}
+task_tester_req ()
+{
+  diag_req_buff[0] = 0x3E;
+  diag_req_buff[1] = 0x00;
+
+  diag_req_len = 2;
+
+  TP_Transmit(); 
+  Task_State = TESTER_MSG_VAL;
+  write("ECU: Tester Present : Sent..");
+}
+
+task_tester_req_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x7E)&&(diag_resp_sf[2]==0x00))
+  {
+    write("ECU: Tester Present : Ok");
+    Task_State = PRG_SESS_REQ;
+  }
+}
+
+/*1*//*Request Extended Diagnostic Session and Validate Extended diagnostic session*/
+task_ext_sess_req()
+{
+  diag_req_buff[0] = 0x10;
+  diag_req_buff[1] = 0x03;
+
+  diag_req_len = 2;
+
+  TP_Transmit();
+
+  Task_State = EXT_SESS_VAL;
+
+  write("ECU: Extended Session Request : Sent..");  
+}
+task_ext_sess_val()
+{ 
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x50)&&(diag_resp_sf[2]==0x03))
+  {
+    write("ECU: Extended Session Request : Ok");
+    Task_State = DIS_FAULTCOD_REQ;
+    //Task_State = PRG_SESS_REQ;
+  }
+}
+
+
+/*2*//*Request Disable DTC and Validate Disable DTC Response*/
+task_disable_faultcode_req()
+{
+  diag_req_buff[0] = 0x85;
+  diag_req_buff[1] = 0x02;
+      
+  diag_req_len = 2;       
+
+  TP_Transmit();
+
+  Task_State = DIS_FAULTCOD_VAL;           
+
+  write("ECU: Disable Fault Code Request : Sent..");
+  write("ECU: Disable Fault Code Request : Ok");
+}
+task_disable_faultcode_val()
+{
+	if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0xC5))
+	{
+		write("ECU: Disable Fault Code Request : Ok");
+		Task_State = DIS_NRMSGTX_REQ;
+	}
+}
+
+
+/*3*//*Request Disable Normal message and validate disable normal message response*/
+task_disable_normal_msg_tx_req()
+{
+  diag_req_buff[0] = 0x28;
+  diag_req_buff[1] = 0x03;
+  diag_req_buff[2] = 0x01;
+  
+  diag_req_len = 3; 
+
+  TP_Transmit();
+
+  Task_State = DIS_NRMSGTX_VAL; 
+
+  write("ECU: Disable Normal Msg Transmission Request : Sent..");
+  write("ECU: Disable Normal Msg Transmission Request : Ok");
+}
+task_disable_normal_msg_tx_val()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x68))
+  {
+    write("ECU: Disable Normal Msg Transmission Request : Ok");
+    Task_State = PRG_SESS_REQ;
+  }
+}
+
+
+/*4*//*Request Programming Diagnostic Session and Validate Programming diagnostic session*/
+task_prg_sess_req ()
+{
+  diag_req_buff[0] = 0x10;
+  diag_req_buff[1] = 0x02;
+
+  diag_req_len = 2;
+
+  TP_Transmit();
+
+  Task_State = PRG_SESS_VAL;
+
+  write("ECU: Programming Session Request : Sent..");  
+
+}         
+task_prg_sess_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x50)&&(diag_resp_sf[2]==0x02)) 
+  {
+    write("ECU: Programming Session Request : Ok");
+    
+    
+    Task_State = SEC_SEED_REQ;
+  } 
+}      
+
+
+/*5*//*Request SEED & KEY and validate SEED and KEY response*/ 
+Security_Seed_Request ()
+{
+  Sec_Error_Count++;  
+
+  diag_req_buff[0] = 0x27;
+  diag_req_buff[1] = 0x09;
+  diag_req_len = 2;
+  TP_Transmit();  
+  write("ECU: Security Seed Request : Sent..");
+  
+  
+  Task_State = SEC_SEED_VAL;
+}
+task_seed_req_val ()
+{
+ setTimer(tester_time,2000);
+     
+  if(diag_resp_rcvd == TRUE)
+  {
+    if(diag_resp_sf[0] == 0x06)
+    {
+      if(diag_resp_sf[1] == 0x67)
+      {
+        if(diag_resp_sf[2] == 0x09)
+        {
+          write("ECU: Security Seed Request : Ok");
+          SecureAccessSeed[0]=diag_resp_sf[3];
+          SecureAccessSeed[1]=diag_resp_sf[4];
+          SecureAccessSeed[2]=diag_resp_sf[5];
+          SecureAccessSeed[3]=diag_resp_sf[6];
+		  fbl_key_Generate_Bytes(SecureAccessSeed);
+          fbl_key_generate();                     
+        }
+      }
+    }
+    else if(diag_resp_sf[0] == 0x03)
+    {
+      if(diag_resp_sf[1] == 0x7F)
+      {
+        /*If Failed then , send the SEED request again*/  
+        Task_State = SEC_SEED_REQ;
+      }
+    }
+  }
+}
+fbl_key_Generate_Bytes(byte aceessSeed[])
+{
+	seedKey = (aceessSeed[0] << 24) | (aceessSeed[1] << 16) | (aceessSeed[2] << 8) | aceessSeed[3];
+	
+	for(bitLoop=0; bitLoop < 35; bitLoop++)
+	{
+		if(seedKey & 0x80000000)
+		{
+			seedKey = seedKey << 1;
+			seedKey = seedKey ^ KEY_MASK;
+		}
+		else
+		{
+			seedKey = seedKey << 1;
+		}
+	}	
+	diag_req_buff[2] = (byte)(seedKey >> 24);  
+	diag_req_buff[3] = (byte)(seedKey >> 16);  
+	diag_req_buff[4] = (byte)(seedKey >> 8);  
+	diag_req_buff[5] = (byte)(seedKey >> 0);  
+}
+
+fbl_key_generate ()
+{
+  if(Sec_Error_Count <= NFFA_COUNT)  
+  {
+    diag_req_buff[2] = (byte)Sec_Error_Count; 
+  }
+  write("ECU: Security Key Validation: Sent.....");
+  diag_req_buff[0] = 0x27; 
+  diag_req_buff[1] = 0x0A;;
+  diag_req_len = 6;
+  TP_Transmit();  
+  
+  Task_State = SEC_KEY_VAL;
+}
+
+Sec_Key_Validation()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x67)&&(diag_resp_sf[2]==0x0A))
+  {
+    write("ECU: Security Validation: Ok");
+    seedkey_success =   TRUE;
+
+    if(Flashing_Section_Type != HF_ONLY)
+      Task_State      =   MEM_ERASE_ROM_REQ;
+    else
+      Task_State      =   MEM_ERASE_HF1_REQ;
+  }	
+  else if(diag_resp_sf[1]==0x7F)
+  {
+    write("Mismatch in calculated key.. Trying to Resend");
+    
+    
+    /*If Failed then , send the SEED request again*/
+    Task_State = SEC_SEED_REQ; 
+  }
+}
+ 
+ 
+/*6.1*//*Erase Internal Application Flash*/
+task_erase_req_rom () 
+{     
+  /*diag_req_cmnd     = 0x31;*/
+  diag_req_buff[0]  = 0x31;
+  diag_req_buff[1]  = 0x01;
+  diag_req_buff[2]  = 0xFF;
+  diag_req_buff[3]  = 0x00;
+  diag_req_buff[4]  = 0x01;
+ 
+  diag_req_len = 5;     
+  TP_Transmit();
+  write("ECU: ROM Erase Request : Sent..");
+  
+  Task_State = MEM_ERASE_ROM_VAL;
+}
+task_erase_req_val_rom ()
+{
+  if(
+        (diag_resp_rcvd==TRUE)&&
+        (diag_resp_sf[1]==0x71)&&
+        (diag_resp_sf[2]==0x01)&&
+        (diag_resp_sf[3]==0xFF)&&
+        (diag_resp_sf[4]==0x00)&&
+        (diag_resp_sf[5]==0x00)&&
+        (diag_resp_sf[6]==0x01)
+        )
+  {    
+  	write("ROM Memory Erased Successfully");
+    
+
+    Task_State = REQ_DWNLOAD_ROM;
+  }
+}
+
+
+/*7.1*//*Request Download and validate Request Download Response*/
+task_req_dwnload_rom ()
+{
+  diag_req_cmnd    = 0x34;
+  diag_req_buff[0] = ROM_COMPRESS_DATA;             // 0x00
+  diag_req_buff[1] = ADDR_AND_LENGTH_SIZE_IN_BYTES; // 0x44 
+  
+  diag_req_buff[2] = (byte)(ROM_FILE_START_ADDRESS >> 24);
+  diag_req_buff[3] = (byte)(ROM_FILE_START_ADDRESS >> 16);
+  diag_req_buff[4] = (byte)(ROM_FILE_START_ADDRESS >> 8);
+  diag_req_buff[5] = (byte)(ROM_FILE_START_ADDRESS >> 0);
+
+  diag_req_buff[6] = (byte)(ROM_FILE_LENGTH >> 24);
+  diag_req_buff[7] = (byte)(ROM_FILE_LENGTH >> 16);
+  diag_req_buff[8] = (byte)(ROM_FILE_LENGTH >> 8);
+  diag_req_buff[9] = (byte)(ROM_FILE_LENGTH >> 0);
+
+  diag_req_len = 11;
+  TP_Transmit(); 
+  write("ECU: Request Download Application : Sent..");
+  
+  
+  Task_State = REQ_DWNLOAD_ROMVAL;
+}
+task_req_dwnload_rom_val ()
+{ 
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x74))
+  {
+    write("ECU: Request Download Application : Ok");
+    app_size_counter = 0;
+    rom_handle = openFileRead(ROM_File_Name, 1);
+    write("ECU: Transfer Data Application : Sending..");
+    
+    
+    Task_State = TRSFR_DATA_ROM ;
+    
+    /*TBR*/
+    write("ROM_NO_OF_BLOCK: %lX",ROM_NO_OF_BLOCK);
+    write("NO_OF_BYTES_IN_A_BLOCK: %lX",NO_OF_BYTES_IN_A_BLOCK);
+    write("ROM_NO_OF_REMAINING_BYTES: %lX",ROM_NO_OF_REMAINING_BYTES);
+  } 
+}
+ 
+/*8.1*//*Data Transfer and validate data transfer Response*/
+task_trsfr_data_rom()
+{ 
+  diag_req_cmnd    = 0x36;
+  
+  if(rom_handle == 0)
+  {
+    WriteTextColor(1,250,0,0);
+    write(">>FileName<<.bin: File Open Error!!!");
+    
+    
+    /*incase any problem in opening the file then, go to idle task*/
+    Task_State = IDLE;
+  }
+  else
+  { 
+    if(app_size_counter < ROM_NO_OF_BLOCK)
+    {
+        
+      chk1 = fileGetBinaryBlock(chk_buff, NO_OF_BYTES_IN_A_BLOCK, rom_handle);/*Read the data from binary file and upadte it in chk_buff arrray*/
+        
+      block_seq_counter++;
+      diag_req_buff[0]  =   block_seq_counter;
+      for(i=0; i<NO_OF_BYTES_IN_A_BLOCK;i++)/*Copy the data in to TP buffer which needs to be transmitted*/
+      {
+        diag_req_buff[i+1] =  chk_buff[i];   
+      }
+      diag_req_len = (NO_OF_BYTES_IN_A_BLOCK+2);
+            
+      if( (ROM_NO_OF_REMAINING_BYTES == 0) && (app_size_counter == (ROM_NO_OF_BLOCK-1)) )
+      {
+        /*TBR*/
+          write("fbl_calc_chksum %lX",fbl_calc_chksum);
+      }
+      
+      /*do additive calculation for the current block of data except last 4 byte and update the result in last 4 byte*/
+      ChecksumRoutine(chk_buff,NO_OF_BYTES_IN_A_BLOCK);
+      /*Do 2's Compliment by inverting it and add value 1 to it*/
+      //fbl_calc_chksum = ((~fbl_calc_chksum)+1);
+      /*TBR*/
+      write("Final check code value: %lX",fbl_calc_chksum);
+    }
+    else
+    {
+      write("Entered Else");
+      chk1 = fileGetBinaryBlock(chk_buff, ROM_NO_OF_REMAINING_BYTES, rom_handle);
+    
+      block_seq_counter++;
+      diag_req_buff[0]  =   block_seq_counter;   
+      for(i=0; i<ROM_NO_OF_REMAINING_BYTES;i++)   
+      {
+          diag_req_buff[i+1] =  chk_buff[i];  
+      }  
+      diag_req_len = (ROM_NO_OF_REMAINING_BYTES+2);                
+      
+      ChecksumRoutine(chk_buff,ROM_NO_OF_REMAINING_BYTES);
+      //fbl_calc_chksum = ((~fbl_calc_chksum)+1);   
+      /*Update_Checksum_Byte(fbl_calc_chksum);*/
+
+      write("Final check code value: %lX",fbl_calc_chksum);
+    }   
+    TP_Transmit(); 
+    
+    
+    Task_State = TRSFR_DATA_ROMVAL;         
+  } 
+}
+
+task_trsfr_data_rom_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x76))
+  {
+    diag_resp_rcvd  = 0;        
+    diag_resp_sf[1] = 0;
+    diag_resp_sf[2] = 0;
+    
+    app_size_counter +=1;
+        
+    if(app_size_counter < ROM_NO_OF_BLOCK_FOR_VALIDATION) 
+    {
+      write("ECU: Sending Application Block: %d",app_size_counter);
+      
+      /*If transfer data is not completed fully then send the transfer data again*/
+      Task_State = TRSFR_DATA_ROM;
+    }
+    else
+    {
+      chk1 = fileGetBinaryBlock(chk_buff, 4, rom_handle);
+      write("ECU: Transfer Data Application : Ok"); 
+      /*fbl_calc_chksum = 0;*/
+       
+      /*If transfer data is successfully completed then move to the transfer Exit*/
+      Task_State = TRSFR_EXIT_ROM;
+      block_seq_counter = 0;
+    }
+  }
+}
+
+
+/*9.1*//*Transfer data exit and validate Transfer data exit Response*/
+task_trsfr_exit_rom ()
+{
+  diag_req_buff[0] = 0x37;
+  diag_req_buff[1] = 0x00;
+  diag_req_buff[2] = 0x00;
+
+  diag_req_len = 1;
+            
+  TP_Transmit(); 
+  write("ECU: Transfer Exit Application : Sent..");
+  
+  
+  Task_State = TRSFR_EXIT_ROM_VAL;
+}
+task_trsfr_exit_rom_val ()
+{ 
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x77))
+  {
+    write("ECU: Transfer Exit Application : Ok ");
+    
+    
+    Task_State = CHECKSUM_ROM;
+  } 
+}
+
+
+/*10.1*//*Request routine control and validate Routine control Response*/
+task_checksum_rom ()
+{
+  diag_req_cmnd    = 0x31;
+        
+  diag_req_buff[0] = 0x01;
+  diag_req_buff[1] = 0xFF;  
+  diag_req_buff[2] = 0x01;
+  diag_req_buff[3] = 0x01;
+  diag_req_buff[4] = (byte)( (fbl_calc_chksum & 0xFF000000) >> 24 );
+  diag_req_buff[5] = (byte)( (fbl_calc_chksum & 0x00FF0000) >> 16 );
+  diag_req_buff[6] = (byte)( (fbl_calc_chksum & 0x0000FF00) >> 8 );
+  diag_req_buff[7] = (byte)( (fbl_calc_chksum & 0x000000FF) >> 0 );
+  
+  fbl_calc_chksum   =   0;
+  
+  diag_req_len = 9;
+  TP_Transmit(); 
+  write("ECU: Checksum for Application : Sent..");
+  
+  
+  Task_State = CHECKSUM_ROM_VAL;        
+} 
+task_checksum_rom_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x71)&&(diag_resp_sf[2]==0x01)&&(diag_resp_sf[3]==0xFF)&&(diag_resp_sf[4]==0x01)&&(diag_resp_sf[5]==0x00)&&(diag_resp_sf[6]==0x01))
+  { 
+    write("ECU: Checksum for Application : Ok");
+    
+    
+    if(Flashing_Section_Type != ROM_ONLY)
+      Task_State      =   MEM_ERASE_HF1_REQ;
+    else
+      Task_State      =   PON_RESET_REQ;
+  }
+  else if( (diag_resp_sf[1]==0x7F) && (diag_resp_sf[3]!=0x78) )  
+  {
+    write("ECU: Checksum for Application Failed: Ok");
+      
+    
+    /*incase any problem in opening the file then, go to idle task*/
+    Task_State = IDLE;
+  }
+  
+  fbl_calc_chksum   =   0;
+} 
+/* ROM reflash ends*/
+
+/*6.2*//*Erase Internal Application Flash*/
+task_erase_req_hf1 () 
+{      
+
+/*diag_req_cmnd     = 0x31;*/
+  diag_req_buff[0]  = 0x31;
+  diag_req_buff[1]  = 0x01;
+  diag_req_buff[2]  = 0xFF;
+  diag_req_buff[3]  = 0x00;
+  diag_req_buff[4]  = 0x02;
+ 
+  diag_req_len = 5; 
+  TP_Transmit();
+  write("ECU: Application Erase Request : Sent..");
+  
+  
+  Task_State = MEM_ERASE_HF1_VAL;
+}
+task_erase_req_val_hf1 ()
+{ 
+  if(
+        (diag_resp_rcvd==TRUE)&&
+        (diag_resp_sf[1]==0x71)&&
+        (diag_resp_sf[2]==0x01)&&
+        (diag_resp_sf[3]==0xFF)&&
+        (diag_resp_sf[4]==0x00)&&
+        (diag_resp_sf[5]==0x00)&&
+        (diag_resp_sf[6]==0x02) 
+    )
+    {    
+  	write("HF Memory Erased Successfully");
+    
+    
+    Task_State = REQ_DWNLOAD_HF1;
+  }
+}
+
+
+/*7.2*//*Request Download and validate Request Download Response*/
+task_req_dwnload_hf1 ()
+{ 
+  diag_req_cmnd    = 0x34;
+  diag_req_buff[0] = HF1_COMPRESS_DATA;
+  diag_req_buff[1] = ADDR_AND_LENGTH_SIZE_IN_BYTES;
+     
+  diag_req_buff[2] = (byte)(HF1_FILE_START_ADDRESS >> 24);
+  diag_req_buff[3] = (byte)(HF1_FILE_START_ADDRESS >> 16);
+  diag_req_buff[4] = (byte)(HF1_FILE_START_ADDRESS >> 8);
+  diag_req_buff[5] = (byte)(HF1_FILE_START_ADDRESS >> 0);
+
+  diag_req_buff[6] = (byte)(HF1_FILE_LENGTH >> 24);
+  diag_req_buff[7] = (byte)(HF1_FILE_LENGTH >> 16);
+  diag_req_buff[8] = (byte)(HF1_FILE_LENGTH >> 8);
+  diag_req_buff[9] = (byte)(HF1_FILE_LENGTH >> 0); 
+  
+  diag_req_len = 11;
+
+  TP_Transmit(); 
+  write("ECU: Request Download Map Image : Sent..");
+  
+  
+  Task_State = REQ_DWNLOAD_HF1VAL;
+}
+task_req_dwnload_hf1_val ()
+{           
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x74))
+  {
+    write("ECU: Request Download HF 1 Image : Ok");
+    app_size_counter = 0;
+    hf1_handle = openFileRead(HF1_File_Name, 1);//HF1_File_Name
+    write("ECU: Transfer Data Map Image : Sending..");
+    
+    
+    Task_State = TRSFR_DATA_HF1;
+  }  
+}  
+
+
+/*8.2*//*Data Transfer and validate data transfer Response*/
+task_trsfr_data_hf1 ()
+{  
+  diag_req_cmnd    = 0x36;
+
+  if(hf1_handle == 0)
+  {
+    WriteTextColor(1,250,0,0);
+    write(">>FileName<<.bin: File Open Error!!!");
+  
+  
+    /*incase any problem in opening the file then, go to idle task*/
+    Task_State = IDLE;
+  }
+  else 
+  {   
+    if(app_size_counter < HF1_NO_OF_BLOCK)
+    {
+      chk1 = fileGetBinaryBlock(chk_buff, NO_OF_BYTES_IN_A_BLOCK, hf1_handle);
+        
+      block_seq_counter++;
+      diag_req_buff[0]  =   block_seq_counter;   
+      for(i=0; i<NO_OF_BYTES_IN_A_BLOCK;i++)
+      {
+        diag_req_buff[i+1] =  chk_buff[i];  
+      }
+      diag_req_len = (NO_OF_BYTES_IN_A_BLOCK+2);
+      ChecksumRoutine(chk_buff,NO_OF_BYTES_IN_A_BLOCK);    
+      if( (HF1_NO_OF_REMAINING_BYTES == 0) && (app_size_counter == (HF1_NO_OF_BLOCK-1)) )
+      {
+          write("Final check code value: %lX",fbl_calc_chksum);
+      }
+      write("fbl_calc_chksum %lX",fbl_calc_chksum);
+    }
+    else
+    {
+      write("Entered Else");
+      chk1 = fileGetBinaryBlock(chk_buff, HF1_NO_OF_REMAINING_BYTES, hf1_handle);
+    
+      block_seq_counter++;
+      diag_req_buff[0]  =   block_seq_counter; 
+      for(i=0; i<HF1_NO_OF_REMAINING_BYTES ;i++)
+      {
+        diag_req_buff[i+1] =  chk_buff[i];  
+      }  
+      diag_req_len = (HF1_NO_OF_REMAINING_BYTES+2); 
+      ChecksumRoutine(chk_buff,HF1_NO_OF_REMAINING_BYTES);
+      write("Final check code value: %lX",fbl_calc_chksum);
+      
+    }
+    TP_Transmit();  
+    
+    Task_State = TRSFR_DATA_HF1VAL;     
+  }
+} 
+task_trsfr_data_hf1_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x76))
+  {
+      
+    diag_resp_rcvd  = 0;        
+    diag_resp_sf[1] = 0;    
+    diag_resp_sf[2] = 0;
+    
+    app_size_counter +=1;
+
+    if(app_size_counter < HF1_NO_OF_BLOCK_FOR_VALIDATION)
+    {
+      write("ECU: Sending HF1 Block: %d",app_size_counter); 
+      
+      
+      /*If transfer data is not completed fully then send the transfer data again*/
+      Task_State = TRSFR_DATA_HF1; 
+    } 
+    else 
+    {
+      chk1 = fileGetBinaryBlock(chk_buff, 4, hf1_handle);
+      write("ECU: Transfer HF data : Ok"); 
+      //fbl_calc_chksum = 0;
+      
+      Task_State = TRSFR_EXIT_HF1; 
+      block_seq_counter = 0;
+    }
+  }
+}
+
+
+/*9.2*//*Transfer data exit and validate Transfer data exit Response*/
+task_trsfr_exit_hf1 ()
+{ 
+  diag_req_buff[0] = 0x37;
+
+  diag_req_len = 1;
+  TP_Transmit();
+      
+  write("ECU: Transfer Exit HF1 data : Sent..");
+  
+  
+  Task_State = TRSFR_EXIT_HF1_VAL;
+}
+task_trsfr_exit_hf1_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x77))
+  {
+    write("ECU: Transfer Exit HF1 data : Ok ");
+    
+    
+    Task_State = CHECKSUM_HF1; 
+  }
+}
+
+
+/*10.2*//*Request routine control and validate Routine control Response*/ 
+task_checksum_hf1 ()
+{
+  diag_req_cmnd    = 0x31;
+        
+  diag_req_buff[0] = 0x01;
+  diag_req_buff[1] = 0xFF;  
+  diag_req_buff[2] = 0x01;
+  diag_req_buff[3] = 0x02;
+  diag_req_buff[4] = (byte)( (fbl_calc_chksum & 0xFF000000) >> 24 );
+  diag_req_buff[5] = (byte)( (fbl_calc_chksum & 0x00FF0000) >> 16 );
+  diag_req_buff[6] = (byte)( (fbl_calc_chksum & 0x0000FF00) >> 8 );
+  diag_req_buff[7] = (byte)( (fbl_calc_chksum & 0x000000FF) >> 0 );
+       
+  fbl_calc_chksum   =   0;
+  
+  diag_req_len = 9;
+
+  TP_Transmit(); 
+  write("ECU: Checksum for HF : Sent..");  
+    
+  
+  Task_State = CHECKSUM_HF1_VAL; 
+}
+task_checksum_hf1_val ()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x71)&&(diag_resp_sf[2]==0x01)&&(diag_resp_sf[3]==0xFF)&&(diag_resp_sf[4]==0x01)&&(diag_resp_sf[5]==0x00)&&(diag_resp_sf[6]==0x02))
+  {
+     write("ECU: Checksum for Application : Ok");
+        
+    Task_State = PON_RESET_REQ;
+  }
+  else if( (diag_resp_sf[1]==0x7F) && (diag_resp_sf[3]!=0x78) )     
+  {
+    write("For Temporary  ECU: Checksum for HF1 : Ok"); 
+    
+     
+    Task_State = IDLE;
+  } 
+   
+}
+/*HF1 reflash ends*/
+
+/*local Functions*/
+void ChecksumRoutine(byte chksum_start_add[], dword length)
+{
+	dword chksumptr;
+  dword pos; 
+  
+  for(pos=0; pos<length; pos += 4)
+  {
+    /*
+      xyz Software binary will look like this
+                LSB      MSB                        LSB      MSB
+                 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+      Address   11 22 33 44 11 11 11 11 11 11 11 11 11 11 11 11
+      Before calculating do the respective changes by shifting the position of bytes
+    */    
+    
+    chksumptr   = ( (dword)(chksum_start_add[pos+3]<<24) | (dword)(chksum_start_add[pos+2]<<16) | (dword)(chksum_start_add[pos+1]<<8) | (dword)(chksum_start_add[pos+0]<<0) );
+
+
+    
+    
+  	fbl_calc_chksum	 +=	chksumptr;
+    /*TBR*/
+    //write("fbl_calc_chksum %lX",fbl_calc_chksum);
+
+  }
+}
+void Update_Checksum_Byte(dword arg_fbl_calc_chksum)
+{
+  diag_req_buff[i-3] = (byte)((arg_fbl_calc_chksum & 0x000000FF)>>0);
+  diag_req_buff[i-2] = (byte)((arg_fbl_calc_chksum & 0x0000FF00)>>8);
+  diag_req_buff[i-1] = (byte)((arg_fbl_calc_chksum & 0x00FF0000)>>16);
+  diag_req_buff[i-0] = (byte)((arg_fbl_calc_chksum & 0xFF000000)>>24);
+}
+
+
+
+/*11*//*Request Power on reset and validate power on reset Response*/
+task_pwron_reset_req()
+{
+  write("ECU: Power-ON Reset Request : Sent");
+  diag_req_buff[0] = 0x11;
+  diag_req_buff[1] = 0x01;
+
+  diag_req_len = 2;
+
+  TP_Transmit();
+
+  
+  Task_State = PON_RESET_VAL;
+}
+task_pwron_reset_req_val()
+{
+  if((diag_resp_rcvd==TRUE)&&(diag_resp_sf[1]==0x51)&&(diag_resp_sf[2]==0x01))
+  {
+    write("ECU: Power-ON Reset Request : Ok");
+
+      Task_State = IDLE;//ENA_NRMSGTX_REQ;
+  }
+}
+
+
+
+on timer Task
+{
+
+  Settimer(Task, 1);
+
+/* Main Routine Start based on task state */
+  switch(Task_State)
+  {
+/*Enter Idel Task when flashing is done*/
+    case IDLE:              task_idle();                      break; 
+/*Request Tester Present and Validate tester present Response */        
+    case TESTER_MSG_REQ:    task_tester_req();                break;
+    case TESTER_MSG_VAL:    task_tester_req_val();            break;
+      
+/*1*//*Request Extended Diagnostic Session and Validate Extended diagnostic session*/
+    case EXT_SESS_REQ:      task_ext_sess_req();              break;
+    case EXT_SESS_VAL:      task_ext_sess_val();              break; 
+      
+/*2*//*Request Disable DTC and Validate Disable DTC Response*/
+    case DIS_FAULTCOD_REQ:  task_disable_faultcode_req();     break;
+    case DIS_FAULTCOD_VAL:  task_disable_faultcode_val();     break; 
+      
+/*3*//*Request Disable Normal message and validate disable normal message response*/
+    case DIS_NRMSGTX_REQ:   task_disable_normal_msg_tx_req(); break;
+    case DIS_NRMSGTX_VAL:   task_disable_normal_msg_tx_val(); break;  
+      
+/*4*//*Request Programming Diagnostic Session and Validate Programming diagnostic session*/
+    case PRG_SESS_REQ:      task_prg_sess_req();              break;
+    case PRG_SESS_VAL:      task_prg_sess_val();              break;
+      
+/*5*//*Request SEED & KEY and validate SEED and KEY response*/    
+    case SEC_SEED_REQ:      Security_Seed_Request();          break;
+    case SEC_SEED_VAL:      task_seed_req_val();              break;
+    case SEC_KEY_VAL:       Sec_Key_Validation();             break;   
+      
+/*6.1*//*Erase Internal Application Flash*/
+    case MEM_ERASE_ROM_REQ: task_erase_req_rom();             break; 
+    case MEM_ERASE_ROM_VAL: task_erase_req_val_rom();         break;
+/*7.1*//*Request Download and validate Request Download Response*/
+    case REQ_DWNLOAD_ROM:   task_req_dwnload_rom ();          break;
+    case REQ_DWNLOAD_ROMVAL:task_req_dwnload_rom_val();       break;
+/*8.1*//*Data Transfer and validate data transfer Response*/
+    case TRSFR_DATA_ROM:    task_trsfr_data_rom();            break;
+    case TRSFR_DATA_ROMVAL: task_trsfr_data_rom_val();        break;
+/*9.1*//*Transfer data exit and validate Transfer data exit Response*/
+    case TRSFR_EXIT_ROM:    task_trsfr_exit_rom();            break;
+    case TRSFR_EXIT_ROM_VAL:task_trsfr_exit_rom_val();        break; 
+/*10.1*//*Request routine control and validate Routine control Response*/
+    case CHECKSUM_ROM:      task_checksum_rom();              break; 
+    case CHECKSUM_ROM_VAL:  task_checksum_rom_val();          break;
+          
+/*6.2*//*Erase Internal Application Flash*/
+    case MEM_ERASE_HF1_REQ: task_erase_req_hf1();             break;
+    case MEM_ERASE_HF1_VAL: task_erase_req_val_hf1();         break;
+/*7.2*//*Request Download and validate Request Download Response*/
+    case REQ_DWNLOAD_HF1:   task_req_dwnload_hf1();           break;
+    case REQ_DWNLOAD_HF1VAL:task_req_dwnload_hf1_val();       break;
+/*8.2*//*Data Transfer and validate data transfer Response*/
+    case TRSFR_DATA_HF1:    task_trsfr_data_hf1();            break;
+    case TRSFR_DATA_HF1VAL: task_trsfr_data_hf1_val();        break;
+/*9.2*//*Transfer data exit and validate Transfer data exit Response*/
+    case TRSFR_EXIT_HF1:    task_trsfr_exit_hf1();            break;
+    case TRSFR_EXIT_HF1_VAL:task_trsfr_exit_hf1_val();        break;
+/*10.2*//*Request routine control and validate Routine control Response*/
+    case CHECKSUM_HF1:      task_checksum_hf1();              break;
+    case CHECKSUM_HF1_VAL:  task_checksum_hf1_val();          break;
+
+/*11*//*Request Power on reset and validate power on reset Response*/
+    case PON_RESET_REQ:     task_pwron_reset_req();           break;
+    case PON_RESET_VAL:     task_pwron_reset_req_val();       break;
+      
+/*13*//*Request Power on reset and validate power on reset Response*/    
+    default:break;
+          
+  }
+}
+           
+on timer tp_cf_dly
+{
+  byte i =0;
+
+  if(tp_first == 1)
+  {
+    diag_req.byte(0) = 0x21;
+    tp_first = 2;
+  }
+  else
+  {
+    diag_req.byte(0)++;
+    diag_req.byte(0) &= 0x2F;
+  }
+
+  if(diag_req_len > 7)
+  {
+    diag_req_len -= 7;
+    for (i = 0; i < 7; i++)
+    {
+      diag_req.byte(i+1) = diag_req_buff[tp_data_len_txd];
+      tp_data_len_txd++;
+    }
+    output(diag_req);
+    settimer(tp_cf_dly, 1);
+  }
+  else
+  {
+    for (i = 0; i < diag_req_len; i++)
+    {
+        diag_req.byte(i+1) = diag_req_buff[i+tp_data_len_txd];
+    }
+    for (i = diag_req_len; i < 10; i++)
+    {
+        diag_req.byte(i+1) = 0x00;
+    }
+    
+    canceltimer(tp_cf_dly);
+    diag_req_len = 0;
+    output(diag_req);
+  }
+}
+on timer tester_time
+{
+  tester_req.byte(0)=0x02;
+  tester_req.byte(1)=0x3E;
+  tester_req.byte(2)=0x02;
+  tester_req.dlc=0x08;
+  setTimer(tester_time,2000);
+}
+
+on timer po_res
+{
+  Task_State = PON_RESET_REQ;
+}

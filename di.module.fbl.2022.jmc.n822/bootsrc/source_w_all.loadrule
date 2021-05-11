@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<scm:sourceControlLoadRule eclipseProjectOptions="create" version="1" xmlns:scm="http://com.ibm.team.scm">
+    <itemLoadRule>
+        <component name="bootsrc"/>
+        <item repositoryPath="/bootsrc"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-module-pbl-diagnostics"/>
+        <item repositoryPath="/di.module.pbl.diagnostics"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-module-pbl-diagnostics"/>
+        <item repositoryPath="/di.module.pbl.diagnostics.doc"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-module-pbl-diagnostics"/>
+        <item repositoryPath="/di.module.pbl.diagnostics.test"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-module-sbl-diagnostics"/>
+        <item repositoryPath="/di.module.sbl.diagnostics"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-module-sbl-diagnostics"/>
+        <item repositoryPath="/di.module.sbl.diagnostics.doc"/>
+    </itemLoadRule>
+    <itemLoadRule>
+        <component name="di-module-sbl-diagnostics"/>
+        <item repositoryPath="/di.module.sbl.diagnostics.test"/>
+    </itemLoadRule>
+</scm:sourceControlLoadRule>

@@ -1,0 +1,288 @@
+@			ind_mset.arm
+@
+@	ARM memset routine.
+@
+@	Copyright (C) 1999-2009 Green Hills Software, Inc.
+@
+@	This program is the property of Green Hills Software, Inc.  Its contents
+@	are proprietary information and no part of it is to be disclosed to
+@	anyone except employees of Green Hills Software, Inc., or as agreed
+@	in writing signed by the President of Green Hills Software, Inc.
+
+#if	defined (__ELF)
+	.text
+#if	defined (__THUMB2_AWARE) && defined(__THUMB)
+	.thumb2
+#define USE_THUMB2
+#elif 	defined(__THUMB)
+	.thumb
+#define USE_THUMB1
+#else
+	.align	4
+#endif
+#ifdef __GHS_DTRACE_INSTRUMENTATION
+#define	p1	r8
+#define p2	r9
+#define p3	r10
+/* Until we do assembly auto-instrumentation, we bypass the bulk of
+ * this file for dtrace and have only a simple, slow implementation.
+ */
+#include "arm_dt.arm"
+	dtrace_stamp ind_mset.arm
+#define MINIMAL_STARTUP
+#else
+#define p1	r5
+#define p2	r6
+#define p3	r7
+#endif /* __GHS_DTRACE_INSTRUMENTATION */
+	.globl	memset
+memset:
+#elif	defined (__COFF)
+#include "armasm.h"		/* GNU ARM Assembler #defines	*/
+	.text
+	.align	2		@ 2**2 = 4
+	.globl	_memset
+_memset:
+#else
+#error	Must #define either __ELF or __COFF.
+#endif
+#ifndef USE_THUMB1
+#if !defined (MINIMAL_STARTUP)
+#define SZ 12
+#ifndef	USE_THUMB2
+	tst	r0,#3
+	mov	r3,r0
+	beq	align
+unalign:
+	subs	r2,r2,#1
+	retlo
+	strb	r1,[r3],#1
+	tst	r3,#3
+	bne	unalign
+align:
+#ifdef USE_NEON
+	cmp	r2,#64
+	blo	preparesmall
+	vdup.8	q0, r1
+	sub	r2, r2, #64
+	vmov	q1, q0
+	vmov	q2, q0
+	vmov	q3, q0
+alignbig:
+	vstm	[r3]!,{d0-d7}
+	subs	r2,r2,#64
+	bcs	alignbig	
+	adds	r2,r2,#64
+	reteq
+	tst	r2,#32
+	vstmne	[r3]!,{d0-d3}
+	tst	r2,#16
+	vstmne	[r3]!,{d0-d1}
+	tst	r2,#8
+	vstmne	[r3]!,{d0}
+	ands	r2,r2,#7
+	reteq
+
+preparesmall:
+	and	ip,r1,#255
+	orr	ip,ip,ip,lsl #8
+	orr	ip,ip,ip,lsl #16
+#else
+	and	ip,r1,#255
+	orr	ip,ip,ip,lsl #8
+	cmp	r2,#64
+	orr	ip,ip,ip,lsl #16
+	blo	alignsmall
+	push	{p1,p2,p3}
+	sub	r2,r2,#64
+	mov 	p1,ip
+	mov	p2,ip
+	mov	p3,ip
+alignbig:
+	stmia	[r3]!,{p1,p2,p3,ip}
+	stmia	[r3]!,{p1,p2,p3,ip}
+	subs	r2,r2,#64
+	stmia	[r3]!,{p1,p2,p3,ip}
+	stmia	[r3]!,{p1,p2,p3,ip}
+	bcs	alignbig	
+	adds	r2,r2,#64
+	beq	alignpop
+	tst	r2,#32
+	stmneia	[r3]!,{p1,p2,p3,ip}
+	stmneia	[r3]!,{p1,p2,p3,ip}
+	tst	r2,#16
+	stmneia	[r3]!,{p1,p2,p3,ip}
+	ands	r2,r2,#15
+alignpop:
+	pop	{p1,p2,p3}
+	reteq
+#endif
+
+alignsmall:
+	subs	r2,r2,#4
+	strhs	ip,[r3],4
+	subhss	r2,r2,#4
+	strhs	ip,[r3],4
+	bhs	alignsmall
+	adds	r2,r2,#4
+	reteq
+unalignend:
+	strb	r1,[r3],#1
+	subs	r2,r2,#1
+	bne	unalignend
+	ret
+#else	/* USE_THUMB2 */
+	tst	r0,#3
+	mov	r3,r0
+	beq	align
+unalign:
+	subs	r2,r2,#1
+	blo	done
+	strb	r1,[r3],#1
+	tst	r3,#3
+	bne	unalign
+align:
+	and	ip,r1,#255
+	orr	ip,ip,ip,lsl #8
+	cmp	r2,#64
+	orr	ip,ip,ip,lsl #16
+	blo	alignsmall
+	push	{p1,p2,p3}
+	sub	r2,r2,#64
+	mov 	p1,ip
+	mov	p2,ip
+	mov	p3,ip
+alignbig:
+	stmia	[r3]!,{p1,p2,p3,ip}
+	stmia	[r3]!,{p1,p2,p3,ip}
+	subs	r2,r2,#64
+	stmia	[r3]!,{p1,p2,p3,ip}
+	stmia	[r3]!,{p1,p2,p3,ip}
+	bcs	alignbig
+	adds	r2,r2,#64
+	beq	alignpop
+	tst	r2,#32
+#ifndef	BREAKUP_STMS
+	/* -breakupmultiplestores assembler hacks don't work here*/
+	itt	ne
+	stmia	[r3]!,{p1,p2,p3,ip}
+	stmia	[r3]!,{p1,p2,p3,ip}
+#else
+	beq	itblock1
+	str     p1,[r3,0]
+        str     p2,[r3,4]
+        str     p3,[r3,8]
+        str     ip,[r3,12]
+	add	r3, r3, 16
+	str     p1,[r3,0]
+        str     p2,[r3,4]
+        str     p3,[r3,8]
+        str     ip,[r3,12]
+	add	r3, r3, 16
+itblock1:
+#endif
+	tst	r2,#16
+#ifndef	BREAKUP_STMS
+	it	ne
+	stmia	[r3]!,{p1,p2,p3,ip}
+#else
+	beq 	itblock2
+	str     p1,[r3,0]
+        str     p2,[r3,4]
+        str     p3,[r3,8]
+        str     ip,[r3,12]
+	add	r3, r3, 16
+itblock2:
+#endif
+	ands	r2,r2,#15
+alignpop:
+	pop	{p1,p2,p3}
+	beq	done
+alignsmall:
+	subs	r2,r2,#4
+	blo	alignsmalldone
+	str	ip,[r3],4
+	subs	r2,r2,#4
+	blo	alignsmalldone
+	str	ip,[r3],4
+	b	alignsmall
+alignsmalldone:
+	adds	r2,r2,#4
+	beq	done
+unalignend:
+	strb	r1,[r3],#1
+	subs	r2,r2,#1
+	bne	unalignend
+done:
+	ret
+#endif	/* USE_THUMB2*/
+#else	/* MINIMAL_STARTUP */
+#define SZ 0
+	stack_entry
+	block_entry
+	mov	r3,r0
+loop:
+	block_entry
+	subs	r2,r2,1
+#if defined(USE_THUMB2) || defined(__GHS_DTRACE_INSTRUMENTATION)
+	blo	done
+	block_entry
+	preimage_8 r3, 1
+	strb	r1,[r3],1
+	b	loop
+done:
+#else
+	strhsb	r1,[r3],1
+	bhs	loop	
+#endif
+	block_entry
+	stack_exit
+	ret
+#endif
+#else	/* USE_THUMB1 */
+#define SZ 0
+	mov	r12,r0
+unalign:
+	lsl	r3,r0,#30
+	beq	align
+	sub	r2,#1
+	blo	done
+	strb	r1,[r0]
+	add	r0,#1
+	b	unalign
+align:
+	sub	r2,#8
+	blo	finish
+	lsl	r1,r1,#24
+	lsr	r3,r1,#8
+	orr	r1,r3
+	lsr	r3,r1,#16
+	orr	r1,r3
+	mov	r3,r1
+alignloop:
+	stmia	[r0]!,{r1,r3}
+	sub	r2,#8
+	bhs	alignloop
+finish:
+	add	r2,#8
+	beq	done
+unalignend:
+	strb	r1,[r0]
+	add	r0,#1
+	sub	r2,#1
+	bne	unalignend
+done:
+	mov	r0,r12
+	ret
+#endif 	/* USE_THUMB1 */
+
+#if	defined (__ELF)
+	.type	memset,$function
+	.size	memset,.-memset
+#ifdef __ghs_asm
+	.fsize memset, SZ-4
+	.scall memset, 0
+#endif /* __ghs_asm */
+#endif
+	.end
+

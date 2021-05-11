@@ -1,0 +1,387 @@
+/*
+*
+*                Language Independent Library
+*
+*       Copyright 1983-2000 Green Hills Software,Inc.
+*
+*  This program is the property of Green Hills Software, Inc,
+*  its contents are proprietary information and no part of it
+*  is to be disclosed to anyone except employees of Green Hills
+*  Software, Inc., or as agreed in writing signed by the President
+*  of Green Hills Software, Inc.
+*
+*/
+/* crt0.arm: initial C runtime startup file for ARM family systems. */
+#include "indsyscl.h"
+#include "arm_dt.arm"
+#if defined(EMBEDDED)
+	.file	"crt0.arm"
+	.text
+
+	.dtinst
+	..edt.__crt0_arm__: 	/* Don't strip out code that uses r5/r6 */
+	
+#if !defined(MINIMAL_STARTUP)
+	.weak __ghsbegin_picbase
+	.weak __ghsbegin_robase
+	.weak __ghsbegin_pidbase
+	.weak __ghs_rambootcodestart
+	.weak __ghs_rambootcodeend
+	.weak __ghs_rombootcodestart
+	.weak __ghs_rombootcodeend
+#endif
+        .weak __ghs_board_memory_init
+	.weak __ghs_initial_dotsyscall
+
+#if defined(__THUMB)
+
+	.force_nothumb
+	.globl _start
+	.need _start_T
+_start:
+; Begin by switching execution from ARM mode on reset to Thumb mode
+	add r8, pc, 1
+	bx r8
+	.type _start,$function
+	.size _start,.-_start
+	.fsize _start, 0
+	.scall	_start, _start_T
+	.thumb
+; Beginning of Thumb startup code.  _start_T is the default entry point for
+; Thumb Only processors such as Cortex-M3, since they don't reset in ARM mode.
+	.globl _start_T
+_start_T:
+#if defined(__ghs_asm)
+	.need	exit
+#ifndef __GHS_DTRACE_INSTRUMENTATION
+	.need 	__dotsyscall
+#endif
+#endif
+; Save argc, argv, envp (if not under Multi, these are meaningless)
+	mov	r6, r0
+	mov	r7, r1
+	mov	r8, r2
+
+; initialize SDRAM a chance to initialize if we're running from flash
+; NOTE: elxr will jump to the next instruction if no __ghs_board_memory_init
+	bl	__ghs_board_memory_init
+
+; Here is where we check to see if Green Hills Multi is running on top of us.
+	mov	r0, SYSCALL_HELLO		; Set call type
+	mov	r1, 1				; Another argument
+#ifndef __GHS_DTRACE_INSTRUMENTATION
+	bl	__ghs_initial_dotsyscall	; Make system call
+#else
+	mov	r0, 0				; Act like we found Multi
+#endif
+
+; We want to find the picbias, which is given by: 
+;     picbias = actualaddress - linktime address
+; 4 is added to the linktime address, to account for the extra 4 added to the
+; PC (r15) when read, due to the less-than-transparent pipelining model of the
+; ARM.
+
+#if !defined(MINIMAL_STARTUP)
+	ldr	r5, pool_myaddr
+	sub	r5, 1				; unset the low order bit
+myaddr:
+	mov     r2, pc
+	sub	r5, r2, r5			; Now r5 contains picbase
+#endif
+
+	cmp	r0, 0				; Did we find Multi?
+; Now, set up some registers if we did not find Multi (see cmp above)
+	bne 	setupregs
+
+; We are under Multi.  Move the argc, argv, envp stuff into r1, r2, r3 for the
+; next procedure call.  They were placed in r6, r7, r8 above...
+	mov	r1, r6
+	mov	r2, r7
+	mov	r3, r8
+	b	regsokay
+
+setupregs:
+; Let's put some reasonable value in the regs
+	ldr	r0, pool_stack
+	mov	sp, r0
+	mov	r1, 0				; Clear argc reg
+	mov	r2, 0				; Clear argv reg
+	mov 	r3, 0				; Clear envp reg
+
+regsokay:
+#if !defined(MINIMAL_STARTUP)
+
+#if defined(__VFP) && defined(__THUMB2_AWARE)
+	.thumb2
+; Enable VFP coprocessor
+#if defined(__CortexM4) || defined(__CortexM3)
+    	movw 	r0, 0xED88 	  ; CPACR is located at address 0xE000ED88 
+    	movt 	r0, 0xE000 	  ; CPACR is located at address 0xE000ED88 
+    	ldr 	r4, [r0] 	  ; Read CPACR
+   	orr 	r4, r4, #(15<<20) ; Set bits 20-23 to enable CP10 and CP11
+	str 	r4, [r0]	  ; Write back modified value to the CPACR
+#else
+; Enable access to coprocessors cp10 and cp11.
+	mrc	p15, 0, r0, c1, c0, 2
+	orr 	r0, r0, 0x00500000
+	mcr 	p15, 0, r0, c1, c0, 2
+	mcr 	p15, 0, r0, c7, c5, 4	; Equivalent of ISB, but works for v6
+	fmrx	r0, fpexc
+	orr	r0, r0, 0x40000000
+	fmxr	fpexc, r0
+#endif /* defined(__CortexM4) || defined(__CortexM3) */
+	.thumb
+#endif /* VFP && __THUMB2_AWARE */
+
+;	mov	fp, 0				; No previous frame
+	ldr	r0, pool_baseptrs		; Could use add r0, pc, offset
+						; if assembler would take it
+	add	r0, r0, r5			; Add in picbase
+	mov	r4, 0				; Clear global regs
+#ifdef __GHS_DTRACE_INSTRUMENTATION
+	ldr	r5, pool_tracebuf
+#else
+	mov	r5, 0
+#endif /* __GHS_DTRACE_INSTRUMENTATION */
+	mov 	r6, 0
+#endif /* !defined(MINIMAL_STARTUP) */
+
+; This is where control merges back together.  Now let's make a call into
+; __ghs_ind_crt0 which will do some more stuff before finally calling main()
+	bl	__ghs_ind_crt0			; Go to C land
+
+oh_well_lets_loop_forever:
+	b	oh_well_lets_loop_forever
+
+	.type _start_T,$function
+	.size _start_T,.-_start_T
+	.fsize _start_T, 0
+	.scall _start_T, __ghs_ind_crt0
+	.scall _start_T, __ghs_board_memory_init
+	.scall _start_T, __ghs_initial_dotsyscall
+
+__ghs_enterblock_func::
+	ret
+	.endf __ghs_enterblock_func
+#if defined(__ghs_asm)
+	.maxstack __ghs_enterblock_func,0
+	.scall __ghs_enterblock_func,__leaf__
+#endif /* defined(__ghs_asm) */
+
+ 	.align 4
+
+#if !defined(MINIMAL_STARTUP)
+pool_myaddr:
+	.data.w	myaddr + 4
+	.type pool_myaddr,$object
+	.size pool_myaddr,4
+
+pool_baseptrs:
+	.data.w	baseptrs 
+	.type pool_baseptrs,$object
+	.size pool_baseptrs,4
+
+#ifdef __GHS_DTRACE_INSTRUMENTATION
+pool_tracebuf:
+	.data.w __ghsbegin_tracebuf
+	.weak   __ghsbegin_tracebuf
+	.type pool_tracebuf,$object
+	.size pool_tracebuf,4
+#endif /* __GHS_DTRACE_INSTRUMENTATION */
+#endif /* !defined(MINIMAL_STARTUP) */
+
+#else /* not __THUMB */
+
+	.globl _start
+_start:
+#if defined(__ghs_asm)
+	.need	exit
+#ifndef __GHS_DTRACE_INSTRUMENTATION
+	.need 	__dotsyscall
+#endif
+#endif
+; Save argc, argv, encp (if not under Multi, these are meaningless)
+	mov	r6, r0
+	mov	r7, r1
+	mov	r8, r2
+; initialize SDRAM a chance to initialize if we're running from flash
+; NOTE: elxr will jump to the next instruction if no __ghs_board_memory_init
+	bl	__ghs_board_memory_init
+; Here is where we check to see if Green Hills Multi is running on top of us.
+	mov	r0, SYSCALL_HELLO		; Set call type
+	mov	r1, 1				; Another argument
+#ifndef __GHS_DTRACE_INSTRUMENTATION
+	bl	__ghs_initial_dotsyscall	; Make system call
+#else
+	mov	r0, 0				; Act like we found Multi
+#endif
+	cmp	r0, 0				; Did we find Multi?
+
+; We want to find the picbias, which is given by: 
+;     picbias = actualaddress - linktime address
+; 8 is added to the linktime address, to account for the extra 8 added to the
+; PC (r15) when read, due to the less-than-transparent pipelining model of the
+; ARM.
+#if !defined(MINIMAL_STARTUP)
+	ldr	r5, pool_myaddr
+myaddr:
+	sub	r5, pc, r5			; Now r5 contains picbase
+#endif
+
+; Now, set up some registers if we did not find Multi (see cmp above)
+
+; We are under Multi.  Move the argc, argv, envp stuff into r1, r2, r3 for the
+; next procedure call.  They were placed in r6, r7, r8 above...
+	moveq	r1, r6
+	moveq	r2, r7
+	moveq	r3, r8
+
+setupregs:
+; Let's put some reasonable value in the regs
+	ldrne	sp, pool_stack
+	movne	r1, 0				; Clear argc reg
+	movne	r2, 0				; Clear argv reg
+	movne 	r3, 0				; Clear envp reg
+
+regsokay:
+#if !defined(MINIMAL_STARTUP)
+#if defined(__VFP)
+; Enable VFP coprocessor
+; Enable access to coprocessors cp10 and cp11 for v6+ processors.
+	mrc     p15, 0, r0, c0, c0, 0
+	and 	r0, r0, 0x000f0000
+	cmp     r0, 0x00070000
+	blt	enablevfp
+	mrc 	p15, 0, r0, c1, c0, 2
+	orr 	r0, r0, 0x00500000
+	mcr 	p15, 0, r0, c1, c0, 2
+	mcr 	p15, 0, r0, c7, c5, 4	; Equivalent of ISB, but works for v6
+enablevfp:
+; Enable VFP coprocessor
+	fmrx	r0, fpexc
+	orr	r0, r0, 0x40000000
+	fmxr	fpexc, r0
+#endif
+	mov	fp, 0				; No previous frame
+	ldr	r0, pool_baseptrs		; Could use add r0, pc, offset
+						; if assembler would take it
+	add	r0, r0, r5			; Add in picbase
+	mov	r4, 0				; Clear global regs
+#ifdef __GHS_DTRACE_INSTRUMENTATION
+	ldr	r5, pool_tracebuf
+#else
+	mov	r5, 0
+#endif /* __GHS_DTRACE_INSTRUMENTATION */
+	mov 	r6, 0
+#endif
+; Now let's make a call into
+; __ghs_ind_crt0 which will do some more stuff before finally calling main()
+	bl	__ghs_ind_crt0			; Go to C land
+#if !defined(MINIMAL_STARTUP)
+; We shouldn't get back here.  If we do, let's die
+trytodie:
+	mov	r0, 0
+	.data.w	0xe1000090			; Should be an illegal opcode
+	swi	0
+	swi	1
+	swi	2
+#endif
+oh_well_lets_loop_forever:
+	b	oh_well_lets_loop_forever
+
+	.type _start,$function
+	.size _start,.-_start
+#ifdef __ghs_asm	
+	.fsize _start, 0-4
+	.scall _start, __ghs_ind_crt0
+	.scall _start, __ghs_board_memory_init
+	.scall _start, __ghs_initial_dotsyscall
+#endif /* __ghs_asm */
+__ghs_enterblock_func::
+	ret
+	.endf __ghs_enterblock_func
+#if defined(__ghs_asm)
+	.maxstack __ghs_enterblock_func,0
+	.scall __ghs_enterblock_func,__leaf__
+#endif
+
+#if !defined(MINIMAL_STARTUP)
+pool_myaddr:
+	.data.w	myaddr + 8
+	.type pool_myaddr,$object
+	.size pool_myaddr,4
+
+pool_baseptrs:
+	.data.w	baseptrs
+	.type pool_baseptrs,$object
+	.size pool_baseptrs,4
+
+#ifdef __GHS_DTRACE_INSTRUMENTATION
+pool_tracebuf:
+	.data.w __ghsbegin_tracebuf
+	.weak   __ghsbegin_tracebuf
+	.type pool_tracebuf,$object
+	.size pool_tracebuf,4
+#endif /* __GHS_DTRACE_INSTRUMENTATION */
+#endif /* !defined(__MINIMAL_STARTUP) */
+
+#endif /* __THUMB */
+
+pool_stack:
+	.data.w	__ghsend_stack
+	.type pool_stack,$object
+	.size pool_stack,4
+
+#if defined(__ARMVE)
+ve_stack:
+/*	.data.w __ghsend_ve_stack */
+	.data.w 0x3ff	/* address register is only 10 bits. the high 18 bits
+			 * (31-14) and low 4 bits (3-0) of 0x08003ff0 are 
+			 * implicit */
+#endif
+
+#if !defined(MINIMAL_STARTUP)
+baseptrs:
+	.data.w 1	/* baseptrs version number */
+	.data.w	__ghsbegin_picbase
+	.data.w	__ghsbegin_robase
+	.data.w	__ghsbegin_pidbase
+	.data.w	__ghs_rambootcodestart
+	.data.w	__ghs_rambootcodeend
+	.data.w	__ghs_rombootcodestart
+	.data.w	__ghs_rombootcodeend
+	
+	.type baseptrs,$object
+	.size baseptrs,32
+#endif
+
+	.section ".secinfo", "a"
+/* Secinfo: Contains information on what sections should be cleared, copied,
+	    etc.  Normally, the linker just fills this stuff in whenever the
+	    section is empty.  So, this is left commented out, but you can
+	    customize it if your application requires it.
+        .globl __ghsbinfo_clear
+        .globl __ghseinfo_clear
+__ghsbinfo_clear:
+	[these are arguments to the C function memset]
+	.data.w __ghsbegin_bss, 0, __ghssize_bss 
+	.data.w __ghsbegin_sbss,0,  __ghssize_sbss
+__ghseinfo_clear:
+
+        .globl __ghsbinfo_copy
+        .globl __ghseinfo_copy
+__ghsbinfo_copy:
+	[these are arguments to the C function memcpy]
+	.data.w	__ghsbegin_data, __ghsbegin_romdata, __ghssize_data
+__ghseinfo_copy:
+
+        .globl __ghsbinfo_gcount
+        .globl __ghseinfo_gcount
+__ghsbinfo_gcount:
+	.data.w __ghsbegin_text, __ghssize_text
+__ghseinfo_gcount:
+*/
+
+	..bdt.__crt0_arm__:
+	.nodtinst
+#endif

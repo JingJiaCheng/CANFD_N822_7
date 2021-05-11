@@ -1,0 +1,123 @@
+
+#----------------------------------------------------------------------------------------
+#	Common pattern rules for building a component
+#----------------------------------------------------------------------------------------
+
+#$(info #MAKEFLAGS# $(MAKEFLAGS))
+#$(error #MAKECMDGOALS# $(MAKECMDGOALS))
+
+CMP_NAME := $(strip $(CMP_NAME))
+$(info )
+$(info ====== make <$(MAKECMDGOALS)> for Component <<$(CMP_NAME)>> ======)
+
+CMP_DIR  := $(strip $(CMP_DIR))
+
+
+ifneq ($(USE_FILES_LIST),)
+USE_FILES_LIST := $(strip $(USE_FILES_LIST))
+endif
+
+#$(info 'files:  $(notdir $(wildcard $(CMP_DIR)/*.c)) _____ ')
+#$(info 'Exclude files:   $(SRC_EXCLUDE) _____ ')
+#$(info 'Filtered files: $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(CMP_DIR)/*.c))) _____ ')
+
+ifneq ($(SRC_EXCLUDE),*)
+
+# USE_FILES_LIST and SRC_EXCLUDE are mutually exclusive. You can use only one of them at a time
+# If some DIR is excluded with DIR_EXCLUDE, you cannot use USE_FILES_LIST for files in it.
+ifeq ($(USE_FILES_LIST),)
+
+ASM_FILES     := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(CMP_DIR)/*.s)))
+ASM_FILES_850 := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(CMP_DIR)/*.850)))
+ASM_FILES_ARM := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(CMP_DIR)/*.arm)))
+C_FILES   := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(CMP_DIR)/*.c)))
+CPP_FILES := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(CMP_DIR)/*.cpp)))
+
+else
+# Use these rules if USE_FILES_LIST is not empty
+ASM_FILES     := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(CMP_DIR)/*.s)))
+ASM_FILES_850 := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(CMP_DIR)/*.850)))
+ASM_FILES_ARM := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(CMP_DIR)/*.arm)))
+C_FILES   := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(CMP_DIR)/*.c)))
+CPP_FILES := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(CMP_DIR)/*.cpp)))
+
+endif
+
+#$(info -------------- CFLAGS: $(CFLAGS))
+#$(info -------------- DEFINES: $(DEFINES))
+
+ASM_OBJ_FILES     := $(patsubst %.s, %.o, $(ASM_FILES))
+ASM_OBJ_FILES     := $(patsubst %.S, %.o, $(ASM_OBJ_FILES))
+ASM_OBJ_FILES_850 := $(patsubst %.850, %.o, $(ASM_FILES_850))
+ASM_OBJ_FILES_ARM := $(patsubst %.arm, %.o, $(ASM_FILES_ARM))
+
+C_OBJ_FILES   := $(patsubst %.c, %.o, $(C_FILES))
+C_OBJ_FILES   := $(patsubst %.C, %.o, $(C_OBJ_FILES))
+
+CPP_OBJ_FILES := $(patsubst %.cpp, %.o, $(CPP_FILES))
+CPP_OBJ_FILES := $(patsubst %.CPP, %.o, $(CPP_OBJ_FILES))
+
+ASM_OBJ_FILES := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/, $(ASM_OBJ_FILES)))
+ASM_OBJ_FILES_850 := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/, $(ASM_OBJ_FILES_850)))
+ASM_OBJ_FILES_ARM := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/, $(ASM_OBJ_FILES_ARM)))
+C_OBJ_FILES   := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/, $(C_OBJ_FILES)))
+CPP_OBJ_FILES := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/, $(CPP_OBJ_FILES)))
+
+
+
+$(OBJDIR)/$(CMP_NAME) :
+	if [ ! -d "$(OBJDIR)/$(CMP_NAME)" ] ; then mkdir --mode=0777 -p $@ ; fi
+
+$(OBJDIR)/$(CMP_NAME).a : $(ASM_OBJ_FILES) $(C_OBJ_FILES) $(CPP_OBJ_FILES) $(ASM_OBJ_FILES_850) $(ASM_OBJ_FILES_ARM)
+	echo 'Updating library: $@'
+	$(AR) $(ARFLAGS) -o $@ $(ASM_OBJ_FILES) $(C_OBJ_FILES) $(CPP_OBJ_FILES) $(ASM_OBJ_FILES_850) $(ASM_OBJ_FILES_ARM)
+
+$(ASM_OBJ_FILES) : $(OBJDIR)/$(CMP_NAME)/%.o : $(CMP_DIR)/%.s | $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+$(ASM_OBJ_FILES_ARM) : $(OBJDIR)/$(CMP_NAME)/%.o : $(CMP_DIR)/%.arm | $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+$(C_OBJ_FILES) : $(OBJDIR)/$(CMP_NAME)/%.o : $(CMP_DIR)/%.c | $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+
+$(CPP_OBJ_FILES) : $(OBJDIR)/$(CMP_NAME)/%.o : $(CMP_DIR)/%.cpp | $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+ifeq ($(USE_DEPENDANCES), true)
+-include $(ASM_OBJ_FILES:.o=.d)
+-include $(ASM_OBJ_FILES_850:.o=.d)
+-include $(ASM_OBJ_FILES_ARM:.o=.d)
+-include $(C_OBJ_FILES:.o=.d)
+-include $(CPP_OBJ_FILES:.o=.d)
+endif
+
+
+clean :
+	if [ -d "$(OBJDIR)/$(CMP_NAME)" ] ; then rm -fr $(OBJDIR)/$(CMP_NAME) ; fi 
+	if [ -f "$(OBJDIR)/$(CMP_NAME).a" ] ; then rm -f  $(OBJDIR)/$(CMP_NAME).* ; fi 
+
+
+
+all : $(OBJDIR)/$(CMP_NAME).a
+
+rebuild : 
+	$(error 'First "clean" and then build "all" instead of this target.')
+
+else
+# All source files excluded, nothing to do!
+
+all : ;
+rebuild : ;
+clean : ;
+
+endif
+
+#.NOTPARALLEL : 
+
+.PHONY : clean all rebuild

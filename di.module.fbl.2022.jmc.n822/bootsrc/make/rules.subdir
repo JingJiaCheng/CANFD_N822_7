@@ -1,0 +1,83 @@
+
+
+# USE_FILES_LIST and SRC_EXCLUDE are mutually exclusive. You can use only one of them at a time
+# If some DIR is excluded with DIR_EXCLUDE, you cannot use USE_FILES_LIST for files in it.
+ifeq ($(USE_FILES_LIST),)
+
+ASM_FILES := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(DIR)/*.s)))
+ASM_FILES_ARM := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(DIR)/*.arm)))
+C_FILES   := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(DIR)/*.c)))
+CPP_FILES := $(filter-out $(SRC_EXCLUDE), $(notdir $(wildcard $(DIR)/*.cpp)))
+
+else
+# Use these rules if USE_FILES_LIST is not empty
+
+ASM_FILES := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(DIR)/*.s)))
+ASM_FILES_ARM := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(DIR)/*.arm)))
+C_FILES   := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(DIR)/*.c)))
+CPP_FILES := $(filter  $(notdir $(strip $(USE_FILES_LIST))), $(notdir $(wildcard $(DIR)/*.cpp)))
+
+endif
+
+
+ASM_OBJ_FILES := $(patsubst %.s, %.o, $(ASM_FILES))
+ASM_OBJ_FILES_ARM := $(patsubst %.arm, %.o, $(ASM_FILES_ARM))
+ASM_OBJ_FILES := $(patsubst %.S, %.o, $(ASM_OBJ_FILES))
+
+
+C_OBJ_FILES   := $(patsubst %.c, %.o, $(C_FILES))
+C_OBJ_FILES   := $(patsubst %.C, %.o, $(C_OBJ_FILES))
+
+CPP_OBJ_FILES := $(patsubst %.cpp, %.o, $(CPP_FILES))
+CPP_OBJ_FILES := $(patsubst %.CPP, %.o, $(CPP_OBJ_FILES))
+
+
+ASM_OBJ_FILES := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/,  $(notdir $(ASM_OBJ_FILES))))
+ASM_OBJ_FILES_ARM := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/,  $(notdir $(ASM_OBJ_FILES_ARM))))
+C_OBJ_FILES   := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/,  $(notdir $(C_OBJ_FILES))))
+CPP_OBJ_FILES := $(sort $(addprefix $(OBJDIR)/$(CMP_NAME)/,  $(notdir $(CPP_OBJ_FILES))))
+
+
+#$(info ###ASM_OBJ_FILES: $(ASM_OBJ_FILES); )
+#$(info ###ASM_OBJ_FILES_ARM: $(ASM_OBJ_FILES_ARM); )
+#$(info ###C_OBJ_FILES: $(C_OBJ_FILES);)
+#$(info ###CPP_OBJ_FILES: $(CPP_OBJ_FILES);)
+
+#$(info ###ASM_FILES: $(ASM_FILES); )
+#$(info ###ASM_FILES_ARM: $(ASM_FILES_ARM); )
+#$(info ###C_FILES: $(C_FILES);)
+#$(info ###CPP_FILES: $(CPP_FILES);)
+
+
+$(OBJDIR)/$(CMP_NAME) :
+	if [ ! -d "$(OBJDIR)/$(CMP_NAME)" ] ; then mkdir --mode=0777 -p $@ ; fi
+
+mkall: $(ASM_OBJ_FILES) $(ASM_OBJ_FILES_ARM) $(C_OBJ_FILES) $(CPP_OBJ_FILES)
+
+
+$(ASM_OBJ_FILES): $(OBJDIR)/$(CMP_NAME)/%.o: $(DIR)/%.s |  $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+$(ASM_OBJ_FILES_ARM): $(OBJDIR)/$(CMP_NAME)/%.o: $(DIR)/%.arm |  $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+	
+	
+$(C_OBJ_FILES): $(OBJDIR)/$(CMP_NAME)/%.o: $(DIR)/%.c |  $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+$(CPP_OBJ_FILES): $(OBJDIR)/$(CMP_NAME)/%.o: $(DIR)/%.cpp |  $(OBJDIR)/$(CMP_NAME)
+	echo '${<F}'
+	$(CC) $(CFLAGS) $(DEFINES) $(INC_LOCAL) $(INCLUDES) -o $@ $<
+
+ifeq ($(USE_DEPENDANCES), true)
+-include $(ASM_OBJ_FILES:.o=.d)
+-include $(ASM_OBJ_FILES_ARM:.o=.d)
+-include $(ASM_OBJ_FILES_850:.o=.d)
+-include $(C_OBJ_FILES:.o=.d)
+-include $(CPP_OBJ_FILES:.o=.d)
+endif
+
+.PHONY : mkall

@@ -1,0 +1,14 @@
+#!gbuild
+[Select One]
+ind_reset.c
+	-noga
+ind_reset.ppc		[Assembly]
+ind_reset.arm		[Assembly]
+ind_reset.sc		[Assembly]
+ind_reset.mip		[Assembly]
+ind_reset.800		[Assembly]
+ind_reset.fp		[Assembly]
+ind_reset.68		[Assembly]
+ind_reset.86		[Assembly]
+ind_reset.fr		[Assembly]
+ind_reset.sh		[Assembly]

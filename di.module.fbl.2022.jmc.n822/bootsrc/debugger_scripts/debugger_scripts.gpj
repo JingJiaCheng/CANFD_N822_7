@@ -1,0 +1,6 @@
+#!gbuild
+#component debugger_resources
+[Project]
+S6J3200_GHS_BlackRegister_script.rc
+default.con
+Traveo_debug.py

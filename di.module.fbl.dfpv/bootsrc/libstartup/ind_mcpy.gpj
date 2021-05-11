@@ -1,0 +1,13 @@
+#!gbuild
+[Select One]
+ind_mcpy.c
+	-noga
+ind_mcpy.sh		[Assembly]
+ind_mcpy.spa		[Assembly]
+{!isdefined(GHS_DATATRACE)} ind_mcpy.ppc [Assembly]
+ind_mcpy.tri		[Assembly]
+ind_mcpy.800		[Assembly]
+ind_mcpy.sc		[Assembly]
+ind_mcpy.arm		[Assembly]
+ind_mcpy.thm		[Assembly]
+ind_mcpy.bf		[Assembly]

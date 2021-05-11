@@ -1,0 +1,775 @@
+; --------------------------------------------------------------------------------
+; @Title: S6J326 (Traveo) Programming Script for CES demo
+; @Description:
+; @Chip: S6J326CLSA
+; Flash Markers: 0x19F0000-0x19F2000 
+; Internal Flash: 0x01A00000-0x01BFFFFF
+; SRAM: 0x02000000-0x02020000
+; Hyper flash 0 memory mapped address: 0x48000000-0x4BFFFFFF(64MB)
+; Hyper RAM memory mapped address: 0x90000000-0x907FFFFFF(8MB)
+; 
+; @Author: smollov
+; --------------------------------------------------------------------------------
+
+SYStem.RESet
+SYStem.CPU S6J326CLSA
+SYStem.Option.ResBreak OFF
+SYStem.Option.WaitReset 500us
+system.option PWRDWN ON
+system.Option PWRDWNRecover ON
+SYStem.Mode Up
+ 
+; Mask Watchdog-RESET
+LOCAL &scscu_content
+&scscu_content=Data.Long(APB:0x000C01B4)|0x00010100
+Data.Set APB:0x000C01A4 %Long 0x5ECACCE5     ; Unlock register write access
+Data.Set APB:0x000C01B4 %Long &scscu_content ; Make user configuration (SCSCU_CNTL_JTAGCON bit and SCSCU_CNTL_WDGRSTMASK)
+Data.Set APB:0x000C01A4 %Long 0xA135331A     ; Lock register write access again 
+
+FLASH.RESet
+
+GOSUB Define_Globals
+GOSUB Enable_PLL
+
+WinPAGE.Create P000
+WinCLEAR
+
+;system.log.on
+;system.log.list
+;system.log.mode compact off
+;register
+
+WinPOS , , 32. 21.
+DIALOG
+(
+  HEADER "Flash/HyperFlash Selection "
+  POS 1. 1. 30. 1.
+  LINE "Load Memory"
+  POS 1. 2. 30. 1.
+  Option.1: CHOOSEBOX "Internal Flash" ""
+  Option.2: CHOOSEBOX "Internal Flash + HyperFlash" ""
+  Option.3: CHOOSEBOX "HyperFlash" ""
+;  Option.12: CHOOSEBOX "HyperFlash_1" ""
+  POS 1. 6. 30. 1.
+  LINE "Erase Memory"
+  Option.4: CHOOSEBOX "Internal Flash" ""
+  Option.5: CHOOSEBOX "Internal Flash + HyperFlash" ""
+  Option.6: CHOOSEBOX "HyperFlash" "" 
+;  Option.13: CHOOSEBOX "HyperFlash_1" "" 
+  POS 1. 11. 30. 1.  
+  LINE "Dump Memory"
+  Option.7: CHOOSEBOX "Internal Flash" ""
+;  Option.8: CHOOSEBOX "Internal Flash + HyperFlash" ""
+;  Option.9: CHOOSEBOX "HyperFlash" ""     
+  POS 1. 16. 30. 1.
+  LINE "Erase WorkFlash"
+  Option.10: CHOOSEBOX "Erase WorkFlash Data" ""
+  POS 1. 19. 30. 1.  
+  LINE "Test"
+  Option.11: CHOOSEBOX "Do Nothing (Only For Test)" ""
+  ;buttons OK (Default) and Cancel
+  POS 1. 22. 10. 1.
+  DEFBUTTON "OK" "CONTinue"
+  POS 20. 22. 10. 1.
+  BUTTON  "Cancel" "GOTO cancel"
+  CLOSE "GOTO cancel"
+)
+
+
+;set default selections
+setdefaults:
+  DIALOG.SET Option.1
+
+;STOP command halts script execution 
+waitforok:
+  STOP
+;script will continue here when "OK" button is clicked
+  GOTO dialog_ok
+
+;script continues here when Cancel is clicked"
+cancel:
+  DIALOG.END
+  GOTO TuringMenu
+ENDDO
+
+LOCAL &Selection
+
+dialog_ok:
+  IF DIALOG.BOOLEAN(Option.1)
+    &Selection="Option1"
+  ELSE IF DIALOG.BOOLEAN(Option.2)
+    &Selection="Option2"
+  ELSE IF DIALOG.BOOLEAN(Option.3)
+    &Selection="Option3"
+  ELSE IF DIALOG.BOOLEAN(Option.4)
+    &Selection="Option4"
+  ELSE IF DIALOG.BOOLEAN(Option.5)
+    &Selection="Option5"
+  ELSE IF DIALOG.BOOLEAN(Option.6)
+    &Selection="Option6"
+  ELSE IF DIALOG.BOOLEAN(Option.7)
+    &Selection="Option7"
+  ELSE IF DIALOG.BOOLEAN(Option.10)
+    &Selection="Option10"
+  ELSE IF DIALOG.BOOLEAN(Option.12)
+    &Selection="Option12"
+  ELSE IF DIALOG.BOOLEAN(Option.13)
+    &Selection="Option13"
+  ELSE IF DIALOG.BOOLEAN(Option.14)
+    &Selection="Option14"
+  ELSE
+    &Selection="Option11"
+  DIALOG.END   
+  
+ 
+;get selections
+  IF "&Selection"=="Option1"    ;load internal flash
+  (
+    FLASH.Create 1. 0x019F0000--0x019FFFFF  0x2000 TARGET Long	;flash markers area
+    FLASH.Create 2. 0x01A00000--0x01BFFFFF  0x10000 TARGET Long ;internal flash area
+    FLASH.CreateALIAS 0x009F0000--0x00BFFFFF 0x019F0000	        ;Map TCM address range to AXI address range
+    Data.Set 0x00000000++1FFFF %Long 0x0                        ;initialize memory to get ECC bits right
+    &FlashDriver="s6j320.bin" 
+    FLASH.TARGET 0x1000 0x2000 0x1000 ~~/demo/arm/flash/long/&FlashDriver
+    FLASH.ReProgram.ALL /Erase
+    Data.LOAD ..\..\out\pbl.elf
+    
+        FLASH.ReProgram.off
+        
+  )
+  ELSE IF "&Selection"=="Option2"  ;load internal flash + hyperflash
+  (
+	DIALOG.OK "This option is not supported!! Load Internal and external flash separately"  
+    ;GOSUB Init_HyperBus
+    ;FLASH.Create 1. 0x019F0000--0x019F1FFF  0x2000  TARGET Long	;flash markers area
+    ;FLASH.Create 2. 0x01A00000--0x01BFFFFF  0x10000 TARGET Long	;internal flash area
+    ;FLASH.Create 3. 0x90000000--0x93FFFFFF  0x40000 TARGET Word ;hyperflash
+    ;FLASH.CreateALIAS 0x009F0000--0x00AFFFFF 0x019F0000	        ;Map TCM address range to AXI address range
+    ;FLASH.CreateALIAS 0x40000000--0x43FFFFFF 0x90000000 
+    ;Data.Set 0x00000000++1FFFF %Long 0x0                        ;initialize memory to get ECC bits right
+    ;FLASH.TARGET 0x0000000  0x00004000 0x2000 flash-traveo.bin 
+    ;FLASH.ReProgram.ALL /Erase
+    ;Data.LOAD ..\..\out\*  0x009F0000--0x93FFFFFF
+    ;FLASH.ReProgram.off
+    ;SYStem.Mode Up
+  )
+  ELSE IF "&Selection"=="Option3"   ;load hyperflash 0
+  (
+    PRINT "Flashing Hyperflash 0"
+    GOSUB Init_HyperBus
+    FLASH.Create 3. 0x48000000--0x4BFFFFFF 0x40000 TARGET Word
+    Data.Set 0x00000000++1FFFF %Long 0x0                        ;initialize memory to get ECC bits right
+    FLASH.TARGET 0x0000000  0x00004000 0x2000 flash-traveo.bin
+    FLASH.ReProgram.ALL /Erase
+    Data.LOAD ..\..\out\demo.elf  0x48000000--0x4BFFFFFF
+;    FLASH.ReProgram.off
+  )
+  ELSE IF "&Selection"=="Option4"    ;erase internal flash
+  (
+    FLASH.Create 1. 0x019F0000--0x019F1FFF  0x2000 TARGET Long	;flash markers area
+    FLASH.Create 2. 0x01A00000--0x01BFFFFF  0x10000 TARGET Long	;internal flash area
+    FLASH.CreateALIAS 0x009F0000--0x00BFFFFF 0x019F0000	        ;Map TCM address range to AXI address range
+    Data.Set 0x00000000++1FFFF %Long 0x0                        ;initialize memory to get ECC bits right
+    &FlashDriver="s6j320.bin" 
+    FLASH.TARGET 0x1000 0x2000 0x1000 ~~/demo/arm/flash/long/&FlashDriver
+    FLASH.Erase ALL
+  )
+  ELSE IF "&Selection"=="Option5"      ;erase internal flash + hyperflash
+  ( 
+    GOSUB Init_HyperBus
+    FLASH.Create 1. 0x019F0000--0x019F1FFF  0x2000  TARGET Long	;flash markers area
+    FLASH.Create 2. 0x01A00000--0x01BFFFFF  0x10000 TARGET Long	;internal flash area
+    FLASH.Create 3. 0x90000000--0x93FFFFFF  0x40000 TARGET Word ;hyperflash
+    FLASH.CreateALIAS 0x009F0000--0x00AFFFFF 0x019F0000	        ;Map TCM address range to AXI address range
+    FLASH.CreateALIAS 0x40000000--0x43FFFFFF 0x90000000  
+    FLASH.TARGET 0x0000000  0x00004000 0x2000 ..\..\..\di.tool.flash.traveo\src\flash-traveo.bin 
+    FLASH.Erase ALL
+  )
+  ELSE IF "&Selection"=="Option6"        ;erase hyperflash_0
+  ( 
+    PRINT "Erasing HyperFlash 0"
+    GOSUB Init_HyperBus
+    FLASH.Create 3. 0x48000000--0x4BFFFFFF 0x40000 TARGET Word
+    FLASH.TARGET 0x0000000  0x00004000 0x2000 flash-traveo.bin
+    FLASH.ReProgram.ALL /Erase
+;    FLASH.Erase 0x48000000--0x4BFFFFFF
+  )
+  ELSE IF "&Selection"=="Option7"         ;dump internal flash
+  (
+    LOCAL &filename
+    DIALOG.Filew ..\..\out\*.s3
+    ENTRY &filename
+    Data.SAVE.S3record &filename 0x09F0000--0x09F0200||0x0A00000--0x0BFFFFF /RECORDLEN 28.
+  )
+  ELSE IF "&Selection"=="Option8"          ;dump internal flash + hyperflash
+  ( 
+    GOSUB Init_HyperBus
+    LOCAL &filename
+    DIALOG.Filew ..\..\out\*.s3
+    ENTRY &filename
+    Data.SAVE.S3record &filename 0x09F0000--0x09F0200||0x0A00000--0x0BFFFFF||0x90000000--0x93FFFFFF /RECORDLEN 28.
+  )
+  ELSE IF "&Selection"=="Option9"          ;dump hyperflash 0
+  ( 
+    GOSUB Init_HyperBus
+    LOCAL &filename
+    DIALOG.Filew ..\..\out\*.s3
+    ENTRY &filename
+    Data.SAVE.S3record &filename 0x48000000--0x4BFFFFFF /RECORDLEN 28.
+  )
+  ELSE IF "&Selection"=="Option10"	   ;erase workflash
+  ( 
+    GOSUB Erase_Work_Flash
+  )  
+  ELSE
+  (
+    GOSUB Init_HyperBus
+  )
+
+IF ("&Selection"<"Option3")
+(
+  WinPOS 0% 50% 100% 50%
+  WinLarge.Data.List
+ 
+  WinPOS 0% 0% 30% 50%
+  WinLarge.sYmbol.Browse.Module
+ 
+  WinPOS 30% 0% 60% 50%
+  WinLarge.sYmbol.Browse.Function
+ 
+  WinPOS 60% 0% 100% 50%
+  WinLarge.Register
+ 
+  WinPAGE.select P000
+
+  Break.Set main /Program
+
+  Mode.Hll
+)
+ELSE
+(
+)
+
+TuringMenu:
+  menu.reset
+  menu.reprogram
+  (
+      add	
+      menu
+      (
+           popup "Turing"
+           (
+              menuitem "Flash/HyperFlash Selection" "DO s6j324-Turing.cmm"
+           )
+      )
+  )
+
+ENDDO
+ 
+; --------------------------------------------------------------------------------
+
+Enable_PLL:
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_PLL0CGCNTR %Long 0x00000000
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_MOSCCNTR %Long &VALUE_SYSC0_MOSCCNTR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNCKDIVR %Long &VALUE_SYSC0_RUNCKDIVR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC_MOCTTRGR %Long &VALUE_SYSC_MOCTTRGR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNPDCFGR %Long &VALUE_SYSC0_RUNPDCFGR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNCKSRER %Long &VALUE_SYSC0_RUNCKSRER
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNPLL0CNTR %Long &VALUE_SYSC0_RUNPLL0CNTR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNPLL1CNTR %Long &VALUE_SYSC0_RUNPLL1CNTR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNPLL2CNTR %Long &VALUE_SYSC0_RUNPLL2CNTR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNPLL3CNTR %Long &VALUE_SYSC0_RUNPLL3CNTR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNSSCG0CNTR0 %Long &VALUE_SYSC0_RUNSSCG0CNTR0
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNSSCG1CNTR0 %Long &VALUE_SYSC0_RUNSSCG1CNTR0
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNSSCG2CNTR0 %Long &VALUE_SYSC0_RUNSSCG2CNTR0
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNSSCG3CNTR0 %Long &VALUE_SYSC0_RUNSSCG3CNTR0
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKSELR0 %Long &VALUE_SYSC1_RUNCKSELR0
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKSELR1 %Long &VALUE_SYSC1_RUNCKSELR1
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKSELR2 %Long &VALUE_SYSC1_RUNCKSELR2
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKER0 %Long &VALUE_SYSC1_RUNCKER0
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKER1 %Long &VALUE_SYSC1_RUNCKER1
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKER2 %Long &VALUE_SYSC1_RUNCKER2
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR0 %Long &VALUE_SYSC1_RUNCKDIVR0
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR1 %Long &VALUE_SYSC1_RUNCKDIVR1
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR2 %Long &VALUE_SYSC1_RUNCKDIVR2
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR3 %Long &VALUE_SYSC1_RUNCKDIVR3
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR4 %Long &VALUE_SYSC1_RUNCKDIVR4
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR5 %Long &VALUE_SYSC1_RUNCKDIVR5
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR6 %Long &VALUE_SYSC1_RUNCKDIVR6
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR7 %Long &VALUE_SYSC1_RUNCKDIVR7
+
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR8 %Long &VALUE_SYSC1_RUNCKDIVR8
+  
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNCKDIVR9 %Long &VALUE_SYSC1_RUNCKDIVR9
+    
+  Data.Set &SYSC1_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC1_RUNENR %Byte &VALUE_SYSC1_RUNENR
+  
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_RUNCKSELR %Long &VALUE_SYSC0_RUNCKSELR
+
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_TRGRUNCNTR %Long &VALUE_SYSC0_TRGRUNCNTR
+
+  LOCAL &attempts &sysc0_sysstsr_value
+  &attempts=10.
+  WHILE &attempts>0.
+  (
+      &attempts=&attempts-1.
+      &sysc0_sysstsr_value=Data.Long(APB:&SYSC0_SYSSTSR)
+      IF (&sysc0_sysstsr_value&0x10)!=0
+      (
+        &attempts=0.
+      )
+  )
+  
+  RETURN
+
+; --------------------------------------------------------------------------------
+
+Init_HyperBus:
+  
+; +3.3VSW_EN - P2_22 
+ 
+  GOSUB WriteGpioPpc &GPIO_PORTEN &GPIO_KEYCDR 0x4 0x00000001 
+  GOSUB WriteGpioPpc &GPIO_PODR2 &GPIO_KEYCDR 0x4 0x00000000
+  GOSUB WriteGpioPpc &GPIO_DDR2 &GPIO_KEYCDR 0x4 0x00400000
+  GOSUB WriteGpioPpc &PPC_PCFGR222 &PPC_KEYCDR 0x2 0x0080
+  wait 100.ms
+
+; RESET_CON  - P0_26 
+
+  GOSUB WriteGpioPpc &GPIO_PORTEN &GPIO_KEYCDR 0x4 0x00000001
+  GOSUB WriteGpioPpc &GPIO_PODR0 &GPIO_KEYCDR 0x4 0x04000000
+  GOSUB WriteGpioPpc &GPIO_DDR0 &GPIO_KEYCDR 0x4 0x04000000
+  GOSUB WriteGpioPpc &PPC_PCFGR026 &PPC_KEYCDR 0x2 0x0040
+  wait 100.ms
+
+  GOSUB Init_PPC_HyperBus
+  GOSUB Clear_IO_Reset
+  
+  ;Data.Set (&GPR_BASE+0x300) %Long 0x691DB936
+  ;Data.Set 0x50400000 %Long 0x01
+  
+  ;Data.Set (&GPR_BASE+0x380) %Long 0x691DB936
+ 
+  ;Data.Set (&GPR_BASE+0x388) %Long 0x48000000
+  ;Data.Set (&GPR_BASE+0x38c) %Long 0x487fffff
+  ;Data.Set (&GPR_BASE+0x390) %Long 0x48000000
+  ;Data.Set (&GPR_BASE+0x394) %Long 0x487fffff
+  ;Data.Set (&GPR_BASE+0x398) %Long 0x40000000
+  ;Data.Set (&GPR_BASE+0x39c) %Long 0x43ffffff
+  ;Data.Set (&GPR_BASE+0x3a0) %Long 0x44000000
+  ;Data.Set (&GPR_BASE+0x3a4) %Long 0x47ffffff
+  
+  
+  
+  ;the below lines are commented as this is done by the flash-traveo bin
+  ;Data.Set &HYPERBUSI2_MBR0 %Long 0x40000000
+  ;Data.Set &HYPERBUSI2_GPOR %Long 0x01
+  
+  RETURN
+
+
+; --------------------------------------------------------------------------------
+
+Init_PPC_HyperBus:
+
+  LOCAL &valueHyperbusPins
+  
+  &valueHyperbusPins=0x1047
+  ;GOSUB WriteGpioPpc &GPIO_PORTEN &GPIO_KEYCDR 0x4 0x00000001
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x08) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x0a) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x0c) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x0e) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x10) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x12) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x14) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x16) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x18) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x1a) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x1c) &PPC_KEYCDR 0x2 &valueHyperbusPins
+  GOSUB WriteGpioPpc (&PPC_PCFGR_BASE+0x1e) &PPC_KEYCDR 0x2 &valueHyperbusPins
+
+  RETURN
+  
+; --------------------------------------------------------------------------------
+
+Clear_IO_Reset:
+  Data.Set &SYSC0_PROTKEYR %Long &KEY_SYSC_UNLOCK
+  Data.Set &SYSC0_SPECFGR %Long (Data.Long(A:&SYSC0_SPECFGR)&~(0x00600000))
+  
+  ;Data.Set &GPRSUB_LOCKUNLOCK %Long &GPRSUB_UNLOCKKEY
+
+  
+  RETURN
+
+; --------------------------------------------------------------------------------
+
+WriteGpioPpc: ;(address, accesssize, value)
+  LOCAL &addr &keycdr &size &value &tmp
+  ENTRY &addr &keycdr &size &value 
+  IF &size==4
+    &tmp=0x20000000
+  ELSE IF &size==2
+    &tmp=0x10000000
+  ELSE
+    &tmp=0x00000000
+
+  Data.Set A:(&keycdr) %LONG &tmp|0x00000000|(&addr&0x7fff)
+  Data.Set A:(&keycdr) %LONG &tmp|0x40000000|(&addr&0x7fff)
+  Data.Set A:(&keycdr) %LONG &tmp|0x80000000|(&addr&0x7fff)
+  Data.Set A:(&keycdr) %LONG &tmp|0xc0000000|(&addr&0x7fff)
+
+  IF &size==4
+    &tmp="%Long"
+  ELSE IF &size==2
+    &tmp="%Word"
+  ELSE
+    &tmp="%Byte"
+  Data.Set A:(&addr) &tmp &value
+  RETURN
+  
+ ; --------------------------------------------------------------------------------
+ 
+Define_Globals: 
+  GLOBAL &GPIO_PORTEN
+
+  GLOBAL &GPIO_PODR4
+  GLOBAL &GPIO_DDR4
+  GLOBAL &PPC_PCFGR406 
+  
+  GLOBAL &GPIO_PODR2
+  GLOBAL &GPIO_DDR2
+  GLOBAL &GPIO_PODR0
+  GLOBAL &GPIO_DDR0
+  GLOBAL &GPIO_KEYCDR
+  GLOBAL &PPC_PCFGR222
+  GLOBAL &PPC_PCFGR026 
+  GLOBAL &PPC_KEYCDR
+  GLOBAL &PPC_PCFGR_BASE
+  
+  GLOBAL &HYPERBUSI0_MBR0
+  GLOBAL &HYPERBUSI0_GPOR
+  GLOBAL &HYPERBUS_BASE_ADDRESS
+  
+  GLOBAL &KEY_SYSC_UNLOCK
+  GLOBAL &SYSC_MOCTCPR
+  GLOBAL &SYSC_MOCTTRGR 
+  
+  GLOBAL &SYSC0_PROTKEYR
+  GLOBAL &SYSC0_RUNPDCFGR
+  GLOBAL &SYSC0_RUNCKSRER
+  GLOBAL &SYSC0_RUNCKSELR
+  GLOBAL &SYSC0_RUNCKDIVR
+  
+  GLOBAL &SYSC0_RUNPLL0CNTR
+  GLOBAL &SYSC0_RUNPLL1CNTR
+  GLOBAL &SYSC0_RUNPLL2CNTR
+  GLOBAL &SYSC0_RUNPLL3CNTR
+  
+  GLOBAL &SYSC0_RUNSSCG0CNTR0
+  GLOBAL &SYSC0_RUNSSCG1CNTR0
+  GLOBAL &SYSC0_RUNSSCG2CNTR0
+  GLOBAL &SYSC0_RUNSSCG3CNTR0 
+  
+  GLOBAL &SYSC0_TRGRUNCNTR
+  GLOBAL &SYSC0_SYSSTSR 
+  GLOBAL &SYSC0_SPECFGR
+  GLOBAL &SYSC0_PLL0CGCNTR
+  GLOBAL &SYSC0_MOSCCNTR
+ 
+  GLOBAL &SYSC1_PROTKEYR
+  GLOBAL &SYSC1_RUNCKSELR0
+  GLOBAL &SYSC1_RUNCKSELR1
+  GLOBAL &SYSC1_RUNCKSELR2
+  GLOBAL &SYSC1_RUNCKER0
+  GLOBAL &SYSC1_RUNCKER1
+  GLOBAL &SYSC1_RUNCKER2
+  GLOBAL &SYSC1_RUNENR 
+  GLOBAL &SYSC1_RUNCKDIVR0
+  GLOBAL &SYSC1_RUNCKDIVR1
+  GLOBAL &SYSC1_RUNCKDIVR2
+  GLOBAL &SYSC1_RUNCKDIVR3
+  GLOBAL &SYSC1_RUNCKDIVR4
+  GLOBAL &SYSC1_RUNCKDIVR5
+  GLOBAL &SYSC1_RUNCKDIVR6
+  GLOBAL &SYSC1_RUNCKDIVR7
+  GLOBAL &SYSC1_RUNCKDIVR8
+  GLOBAL &SYSC1_RUNCKDIVR9
+  
+  GLOBAL &VALUE_SYSC0_RUNCKSRER 
+  GLOBAL &VALUE_SYSC0_RUNCKSELR
+  GLOBAL &VALUE_SYSC0_RUNPLL0CNTR
+  GLOBAL &VALUE_SYSC0_TRGRUNCNTR
+  GLOBAL &VALUE_SYSC0_RUNPLL0CNTR
+  GLOBAL &VALUE_SYSC0_RUNPLL1CNTR
+  GLOBAL &VALUE_SYSC0_RUNPLL2CNTR
+  GLOBAL &VALUE_SYSC0_RUNPLL3CNTR
+  GLOBAL &VALUE_SYSC0_RUNSSCG0CNTR0
+  GLOBAL &VALUE_SYSC0_RUNSSCG1CNTR0
+  GLOBAL &VALUE_SYSC0_RUNSSCG2CNTR0
+  GLOBAL &VALUE_SYSC0_RUNSSCG3CNTR0
+  GLOBAL &VALUE_SYSC0_MOSCCNTR
+  GLOBAL &VALUE_SYSC_MOCTCPR
+  GLOBAL &VALUE_SYSC_MOCTTRGR
+  GLOBAL &VALUE_SYSC0_RUNPDCFGR
+  GLOBAL &VALUE_SYSC0_RUNCKDIVR
+   
+  GLOBAL &VALUE_SYSC1_RUNCKSELR0 
+  GLOBAL &VALUE_SYSC1_RUNCKSELR1
+  GLOBAL &VALUE_SYSC1_RUNENR 
+  GLOBAL &VALUE_SYSC1_RUNCKSELR2
+  GLOBAL &VALUE_SYSC1_RUNCKER0 
+  GLOBAL &VALUE_SYSC1_RUNCKER1
+  GLOBAL &VALUE_SYSC1_RUNCKER2
+  
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR0
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR1
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR2
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR3
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR4
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR5
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR6
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR7
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR8
+  GLOBAL &VALUE_SYSC1_RUNCKDIVR9
+  
+  
+  GLOBAL &FCFG_WARBR 
+  GLOBAL &VALUE_FCFG_WARBR 
+  GLOBAL &WFCFG_CPR
+  GLOBAL &WFCFG_CPR_VALUE
+  GLOBAL &WFCFG_CR
+  GLOBAL &WFCFG_CR_VE_VALUE
+  GLOBAL &WFCFG_SEQCM
+  GLOBAL &WFCFG_SR
+  GLOBAL &WFCFG_ICR
+  GLOBAL &WFCFG_BERR
+
+
+  &PPC_PCFGR_BASE=0xb4740000
+  &PPC_KEYCDR=0xb4740400
+  &PPC_PCFGR217=0xb47400a2
+  &PPC_PCFGR315=0xb47400de
+  &GPIO_DDR2=0xb4738214
+  &GPIO_PODR2=0xb4738210
+  &GPIO_DDR3=0xb473821C
+  &GPIO_PODR3=0xb4738218
+  &GPIO_KEYCDR=0xb4738404
+  &GPIO_PORTEN=0xb4738400
+  &PPC_PCFGR026=0xb4740034
+  &PPC_PCFGR222=0xb47400ac
+  
+  &HYPERBUS_BASE_ADDRESS=0x90000000
+  &HYPERBUSI0_GPOR=0xb8028440
+  &HYPERBUSI0_MBR0=0xb8028410
+  
+  &KEY_SYSC_UNLOCK=0x5cacce55
+  &SYSC_MOCTTRGR=0xB0600500
+  &SYSC_MOCTCPR=0xB0600508
+  
+  &SYSC0_PROTKEYR=0xb0600000
+  &SYSC0_RUNPDCFGR=0xb0600080
+  &SYSC0_RUNCKSRER=0xb0600084
+  &SYSC0_RUNCKSELR=0xb0600088
+  &SYSC0_RUNCKDIVR=0xb0600090
+  &SYSC0_RUNPLL0CNTR=0xb0600094  
+  &SYSC0_RUNPLL1CNTR=0xb0600098
+  &SYSC0_RUNPLL2CNTR=0xb060009C
+  &SYSC0_RUNPLL3CNTR=0xb06000A0 
+  &SYSC0_RUNSSCG0CNTR0=0xb06000A4
+  &SYSC0_RUNSSCG1CNTR0=0xb06000AC
+  &SYSC0_RUNSSCG2CNTR0=0xb06000B4
+  &SYSC0_RUNSSCG3CNTR0=0xb06000BC
+
+  &SYSC0_TRGRUNCNTR=0xb06000fc
+  &SYSC0_SYSSTSR=0xb0600288
+  
+  &SYSC0_MOSCCNTR=0xb0600604
+  &SYSC0_PLL0CGCNTR=0xb0600610
+  &SYSC0_SPECFGR=0xb0600680
+  
+  &SYSC1_PROTKEYR=0xb0300000
+  &SYSC1_RUNCKSELR0=0xb0300080
+  &SYSC1_RUNCKSELR1=0xb0300084
+  &SYSC1_RUNCKSELR2=0xb0300088
+  &SYSC1_RUNCKER0=0xb030008C
+  &SYSC1_RUNCKER1=0xb0300090
+  &SYSC1_RUNCKER2=0xb0300094
+  &SYSC1_RUNCKDIVR0=0xb0300098
+  &SYSC1_RUNCKDIVR1=0xb030009C
+  &SYSC1_RUNCKDIVR2=0xb03000A0
+  &SYSC1_RUNCKDIVR3=0xb03000A4
+  &SYSC1_RUNCKDIVR4=0xb03000A8
+  &SYSC1_RUNCKDIVR5=0xb03000AC
+  &SYSC1_RUNCKDIVR6=0xb03000B0
+  &SYSC1_RUNCKDIVR7=0xb03000B4
+  &SYSC1_RUNCKDIVR8=0xb03000B8
+  &SYSC1_RUNCKDIVR9=0xb03000BC
+  &SYSC1_RUNENR=0xb03000fc
+  
+  &VALUE_SYSC1_RUNENR=0x000000ab
+  &VALUE_SYSC1_RUNCKSELR0=0x09110004
+  &VALUE_SYSC1_RUNCKSELR1=0x060A050B
+  &VALUE_SYSC1_RUNCKSELR2=0x00000607
+  &VALUE_SYSC1_RUNCKER0=0xFFBF4FF1
+  &VALUE_SYSC1_RUNCKER1=0x1F1F1F01 
+  &VALUE_SYSC1_RUNCKER2=0x00001F1F
+  
+  &VALUE_SYSC0_RUNCKSRER=0x000F0F07
+  &VALUE_SYSC0_RUNCKSELR=0x00000005
+  &VALUE_SYSC0_RUNPLL0CNTR=0x001E0100
+  &VALUE_SYSC0_RUNPLL1CNTR=0x002D0100
+  &VALUE_SYSC0_RUNPLL2CNTR=0x00190100
+  &VALUE_SYSC0_RUNPLL3CNTR=0x001E0100
+  &VALUE_SYSC0_RUNSSCG0CNTR0=0x001D0100
+  &VALUE_SYSC0_RUNSSCG1CNTR0=0x00190100
+  &VALUE_SYSC0_RUNSSCG2CNTR0=0x00190100
+  &VALUE_SYSC0_RUNSSCG3CNTR0=0x00320100
+  
+  &VALUE_SYSC0_MOSCCNTR=0x08000000
+  &VALUE_SYSC_MOCTCPR=0x00000000
+  &VALUE_SYSC_MOCTTRGR=0x00000001
+  &VALUE_SYSC0_RUNPDCFGR=0x03F31100
+  &VALUE_SYSC0_RUNCKDIVR=0x00000003
+    
+  &VALUE_SYSC0_TRGRUNCNTR=0x000000ab
+  
+  &VALUE_SYSC1_RUNCKDIVR0=0x01040100
+  &VALUE_SYSC1_RUNCKDIVR1=0x11020022
+  &VALUE_SYSC1_RUNCKDIVR2=0x05050552
+  &VALUE_SYSC1_RUNCKDIVR3=0x05050303
+  &VALUE_SYSC1_RUNCKDIVR4=0x00000000
+  &VALUE_SYSC1_RUNCKDIVR5=0x00030300
+  &VALUE_SYSC1_RUNCKDIVR6=0x00000000
+  &VALUE_SYSC1_RUNCKDIVR7=0x00000000
+  &VALUE_SYSC1_RUNCKDIVR8=0x00000001
+  &VALUE_SYSC1_RUNCKDIVR9=0x00030100
+  &GPIO_DDR0=0xb4738204
+  &GPIO_PODR0=0xb4738200
+
+;for workflash
+  &FCFG_WARBR=0xB0412068
+  &VALUE_FCFG_WARBR=0x1000000
+  &WFCFG_CPR=0xB0412000
+  &WFCFG_CPR_VALUE=0xCF6DF1A5
+  &WFCFG_CR=0xB0412008
+  &WFCFG_CR_VE_VALUE=0x100
+  &WFCFG_SEQCM=0xB0412054
+  &WFCFG_SR=0xB0412028
+  &WFCFG_ICR=0xB0412024
+  &WFCFG_BERR=0xB0412060
+  RETURN
+    
+	
+ ; --------------------------------------------------------------------------------
+Erase_Work_Flash:
+    LOCAL &Tmp_val 
+    LOCAL &SectorToErase 
+	LOCAL &Value
+    ;Erase all workflash sectors
+    &SectorToErase=0
+    WHILE (&SectorToErase<0x0E)
+    (
+	  PRINT "Erasing WorkFlash Sector " &SectorToErase
+      ;Start of algorithm
+      WHILE Data.Long(A:&FCFG_WARBR)!=&VALUE_FCFG_WARBR
+      (
+       ;Do nothing. Just wait for proper value in register
+      )
+    
+      &Tmp_val=(Data.Long(A:&WFCFG_CR))
+      ;Unlock configuration registers
+      Data.Set A:&WFCFG_CPR %Long &WFCFG_CPR_VALUE
+      ;Enable writing
+      Data.Set A:&WFCFG_CR %Long ((&Tmp_val)|&WFCFG_CR_VE_VALUE)
+      
+        ;Wait to finish doing nothing
+        WHILE ((Data.Long(A:&WFCFG_SR)&0x1)!=0x1)
+        (
+         ;Just wait do nothing
+        )
+        
+        ;Erase command for selected sector
+		&Value=0x00000002+(&SectorToErase*0x10000)
+        Data.Set A:&WFCFG_SEQCM %Long  &Value
+        
+        ;Wait erasing to finish doing nothing
+        WHILE ((Data.Long(A:&WFCFG_SR)&0x1)!=0x1) 
+        (
+         ;Just wait do nothing
+        )
+        
+        ;Write protect key data to unlock registers
+        Data.Set A:&WFCFG_CPR %Long &WFCFG_CPR_VALUE
+        
+        ;Disable write
+        &Tmp_val=Data.Long(A:&WFCFG_CR)
+        Data.Set A:&WFCFG_CR %Long ((&Tmp_val)&(~&WFCFG_CR_VE_VALUE))  
+         
+        ;Increment Sector number
+        &SectorToErase=&SectorToErase+1
+    )
+	PRINT "Erasing WorkFlash Sectors DONE"
+    RETURN
+
+
+ 

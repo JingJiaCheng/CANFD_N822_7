@@ -1,0 +1,386 @@
+/*
+                Language Independent Runtime Library
+ 
+                       Copyright 1983-2001
+                    Green Hills Software,Inc.
+ 
+    This program is the property of Green Hills Software, Inc,
+    its contents are proprietary information and no part of it
+    is to be disclosed to anyone except employees of Green Hills
+    Software, Inc., or as agreed in writing signed by the President
+    of Green Hills Software, Inc.
+*/
+
+/*
+ *  void *memcpy( void *dest, const void *src, size_t count );
+ *         per apcs:     r0                r1          r2
+ * returns: r0=dest address
+ */
+
+	.file "ind_mcpy.arm"
+	.text
+        .globl  memcpy
+
+#include "arm_dt.arm"
+	dtrace_stamp ind_mcpy.arm
+
+
+#ifndef __THUMB
+
+#if defined(__BigEndian)
+#define rshift lsl
+#define lshift lsr
+#else
+#define rshift lsr
+#define lshift lsl
+#endif
+
+	.nothumb
+memcpy:
+#if !defined(MINIMAL_STARTUP) && !defined(__GHS_DTRACE_INSTRUMENTATION)
+#define FSIZ 8
+  stmdb    sp!,{r0,r14}         ; 
+  subs     r2,r2,#4             ; if less than 4 bytes to move, jump to endgame
+  blt      mcpy_neardone        ; 
+  ands     r12,r0,#3            ; now check alignment of dest address
+  beq      mcpy_check_src_align ; skip next if OK
+
+mcpy_dest_unalign:
+  rsb      r12,r12,#4           ; destination address is not aligned
+  cmp      r12,#2               ; fill with bytes until aligned or done
+  ldrb     r3,[r1],#1           ; 
+  strb     r3,[r0],#1           ; 
+  ldrgeb   r3,[r1],#1           ; 
+  strgeb   r3,[r0],#1           ; 
+  ldrgtb   r3,[r1],#1           ; 
+  strgtb   r3,[r0],#1           ; 
+  subs     r2,r2,r12            ; update counter of bytes
+  blt      mcpy_neardone        ; get out if done
+  
+mcpy_check_src_align:
+  ands     r12,r1,#3            ; look at src address
+  bne      mcpy_src_unalign     ; branch if not aligned
+
+mcpy_src_align:
+#ifdef	USE_NEON
+  subs     r2,r2,#0x3c
+  blt      mcpy_midmove
+mcpy_bigmove:
+  pld	   [r1, #0xc0]
+  vldm	   r1!,{d0-d7}
+  subs	   r2,r2,#0x40
+  vstm	   r0!,{d0-d7}
+  bge      mcpy_bigmove         ; repeat if more to go
+mcpy_midmove:
+  tst      r2,#0x20
+  vldmne   r1!,{d0-d3}
+  vstmne   r0!,{d0-d3}
+  tst      r2,#0x10             ; is there 16 more to go?
+  vldmne   r1!,{d0-d1}		; if yes -- do it
+  vstmne   r0!,{d0-d1}  	; "  "  
+  tst      r2,#0x8
+  vldmne   r1!,{d0}
+  vstmne   r0!,{d0}
+  tst      r2,#0x4
+  ldrne    r3,[r1],#4
+  strne    r3,[r0],#4
+  ands	   r2,r2,#3
+  beq      return
+mcpy_last4:
+  cmp      r2,#2                ; else see if 2 bytes need to be copied
+  ldrb     r3,[r1],#1           ; get a byte from source
+  strb     r3,[r0],#1           ; copy a byte to dest
+  ldrgeb   r3,[r1],#1           ; repeat if needed (r2>=2)
+  strgeb   r3,[r0],#1           ;  "   "
+  ldrgtb   r3,[r1],#1           ; repeat if needed (r2>2)
+  strgtb   r3,[r0],#1           ;  "   "
+  b	   return		; restore and return
+mcpy_neardone:
+  adds     r2,r2,#4             ; HERE if < 4 bytes to copy.  restore count
+  bne	   mcpy_last4
+  b	   return
+#else
+  subs     r2,r2,#8             ; HERE if src addr is aligned. count-8
+  blt      mcpy_test8           ; get out if too few to move
+  subs     r2,r2,#0x14          ; else count-20
+  blt      mcpy_final20         ; get out if too few to move
+  stmdb    sp!,{r8}             ; save r8 on stack
+
+mcpy_bigmove:
+  ldmia    r1!,{r3,r8,r12,r14}  ; load a bunch of registers
+  stmia    r0!,{r3,r8,r12,r14}  ; store a bunch of registers
+  ldmia    r1!,{r3,r8,r12,r14}  ; "  "
+  stmia    r0!,{r3,r8,r12,r14}  ; "  "
+  subs     r2,r2,#0x20          ; count-32
+  bge      mcpy_bigmove         ; repeat if more to go
+  cmn      r2,#0x10             ; is there 16 more to go?
+  ldmgeia  r1!,{r3,r8,r12,r14}  ; if yes -- do it
+  stmgeia  r0!,{r3,r8,r12,r14}  ; "  "
+  subge    r2,r2,#0x10          ; "  " and adjust count-10
+  ldmia    sp!,{r8}             ; restore r8
+
+mcpy_final20:
+  adds     r2,r2,#0x14          ; prep to do final 20
+mcpy_final20a:
+  ldmgeia  r1!,{r3,r12,r14}     ; move bytes
+  stmgeia  r0!,{r3,r12,r14}     ; "  "
+  subges   r2,r2,#0xc           ; adjust if needed
+  bge      mcpy_final20a        ; loop again if needed
+
+mcpy_test8:
+  adds     r2,r2,#8             ; if less than 8 regs
+  blt      mcpy_neardone        ; go take care of it
+  subs     r2,r2,#4             ; else 
+  ldrlt    r3,[r1],#4           ; do a fast move, 4 bytes at a time
+  strlt    r3,[r0],#4           ; 
+  ldmgeia  r1!,{r3,r12}         ; 
+  stmgeia  r0!,{r3,r12}         ; 
+  subge    r2,r2,#4             ;
+
+mcpy_neardone:
+  adds     r2,r2,#4             ; HERE if < 4 bytes to copy.  restore count
+  beq	   return		; if nothing to do, restore and return
+  cmp      r2,#2                ; else see if 2 bytes need to be copied
+  ldrb     r3,[r1],#1           ; get a byte from source
+  strb     r3,[r0],#1           ; copy a byte to dest
+  ldrgeb   r3,[r1],#1           ; repeat if needed (r2>=2)
+  strgeb   r3,[r0],#1           ;  "   "
+  ldrgtb   r3,[r1],#1           ; repeat if needed (r2>2)
+  strgtb   r3,[r0],#1           ;  "   "
+  b	   return		; restore and return
+#endif
+
+mcpy_src_unalign:
+  bic      r1,r1,#3             ; HERE if src not word aligned, dest OK. clear 2 lsb
+  ldr      r14,[r1],#4          ; get src 
+  cmp      r12,#2               ; check alignment
+  bgt      mcpy_sa6             ; jump if LSB's = 0x3
+  beq      mcpy_sa4             ; jump if LSB's = 0x2
+  cmp      r2,#0xc
+  blt      mcpy_sa1
+  sub      r2,r2,#0xc
+#ifdef __GHS_DTRACE_INSTRUMENTATION
+#define	p1	r8
+#define p2	r9
+#else
+#define p1	r5
+#define p2	r6
+#endif /* __GHS_DTRACE_INSTRUMENTATION */
+
+#if defined(USE_NEON) && !defined(__BigEndian)
+  vmov.32  d3[1], r14
+mcpy_sa3:
+  pld	   [r1, #0x30]
+  vldm     r1!, {d0-d1}
+  vext.8   q2, q1, q0, #13
+  vstm     r0!, {d4-d5}
+  subs     r2, r2, #0x10
+  vmov     q1, q0
+  bge      mcpy_sa3
+  vmov.32  r14, d3[1]
+#else
+  stmdb    sp!,{p1,p2}
+mcpy_sa3:
+  mov      r3,r14,rshift #8        ; 2 LSB's of source address = 0x1
+  ldmia    r1!,{p1,p2,r12,r14}
+  orr      r3,r3,p1,lshift #24
+  mov      p1,p1,rshift #8
+  orr      p1,p1,p2,lshift #24
+  mov      p2,p2,rshift #8
+  orr      p2,p2,r12,lshift #24
+  mov      r12,r12,rshift #8
+  orr      r12,r12,r14,lshift #24
+  stmia    r0!,{r3,p1,p2,r12}
+  subs     r2,r2,#0x10
+  bge      mcpy_sa3
+  ldmia    sp!,{p1,p2}
+#endif
+  adds     r2,r2,#0xc
+  blt      mcpy_sa2  
+
+mcpy_sa1:
+  mov      r12,r14,rshift #8
+  ldr      r14,[r1],#4
+  orr      r12,r12,r14,lshift #24
+  str      r12,[r0],#4
+  subs     r2,r2,#4
+  bge      mcpy_sa1
+
+mcpy_sa2:
+  sub      r1,r1,#3
+  b        mcpy_neardone  
+
+mcpy_sa6:  
+  cmp      r2,#0xc              ; 2 LSB's of source address = 0x3
+  blt      mcpy_sa10  
+  sub      r2,r2,#0xc
+
+#if defined(USE_NEON) && !defined(__BigEndian)
+  vmov.32  d3[1], r14
+mcpy_sa9:
+  pld	   [r1, #0x30]
+  vldm     r1!, {d0-d1}
+  vext.8   q2, q1, q0, #15
+  vstm     r0!, {d4-d5}
+  subs     r2, r2, #0x10
+  vmov     q1, q0
+  bge      mcpy_sa9  
+  vmov.32  r14, d3[1]
+#else
+  stmdb    sp!,{p1,p2}
+mcpy_sa9:
+  mov      r3,r14,rshift #24
+  ldmia    r1!,{p1,p2,r12,r14}
+  orr      r3,r3,p1,lshift #8
+  mov      p1,p1,rshift #24
+  orr      p1,p1,p2,lshift #8
+  mov      p2,p2,rshift #24
+  orr      p2,p2,r12,lshift #8
+  mov      r12,r12,rshift #24
+  orr      r12,r12,r14,lshift #8
+  stmia    r0!,{r3,p1,p2,r12}
+  subs     r2,r2,#0x10
+  bge      mcpy_sa9
+  ldmia    sp!,{p1,p2}
+#endif
+  adds     r2,r2,#0xc
+  blt      mcpy_sa11  
+
+mcpy_sa10:
+  mov      r12,r14,rshift #24
+  ldr      r14,[r1],#4
+  orr      r12,r12,r14,lshift #8
+  str      r12,[r0],#4
+  subs     r2,r2,#4
+  bge      mcpy_sa10  
+
+mcpy_sa11:
+  sub      r1,r1,#1
+  b        mcpy_neardone  
+
+mcpy_sa4:
+  cmp      r2,#0xc              ; HERE if src address(2 LSB)=0x2  is count>12?
+  blt      mcpy_sa5             ; jump if count < 12 
+  sub      r2,r2,#0xc           ; else adjust count
+
+#if defined(USE_NEON) && !defined(__BigEndian)
+  vmov.32  d3[1], r14
+mcpy_sa7:
+  pld	   [r1, #0x30]
+  vldm     r1!, {d0-d1}
+  vext.8   q2, q1, q0, #14
+  vstm     r0!, {d4-d5}
+  subs     r2, r2, #0x10
+  vmov     q1, q0
+  bge      mcpy_sa7
+  vmov.32  r14, d3[1]  
+#else
+  stmdb    sp!,{p1,p2}          ; save regs on stack
+mcpy_sa7:
+  mov      r3,r14,rshift #16
+  ldmia    r1!,{p1,p2,r12,r14}
+  orr      r3,r3,p1,lshift #16
+  mov      p1,p1,rshift #16
+  orr      p1,p1,p2,lshift #16
+  mov      p2,p2,rshift #16
+  orr      p2,p2,r12,lshift #16
+  mov      r12,r12,rshift #16
+  orr      r12,r12,r14,lshift #16
+  stmia    r0!,{r3,p1,p2,r12}
+  subs     r2,r2,#0x10
+  bge      mcpy_sa7  
+  ldmia    sp!,{p1,p2}
+#endif
+  adds     r2,r2,#0xc
+  blt      mcpy_sa8
+
+mcpy_sa5:
+  mov      r12,r14,rshift #16
+  ldr      r14,[r1],#4
+  orr      r12,r12,r14,lshift #16
+  str      r12,[r0],#4
+  subs     r2,r2,#4
+  bge      mcpy_sa5  
+
+mcpy_sa8:
+  sub      r1,r1,#2
+  b        mcpy_neardone
+
+return:
+  ldmia  sp!,{r0,lr}          ; restore
+  ret
+#if !defined(__COFF) && defined(__ghs_asm)
+	.maxstack memcpy, 16
+#endif
+#elif defined(__GHS_DTRACE_INSTRUMENTATION)
+#define FSIZ 0
+	mov	r3, r0
+loop:
+	subs	r2,r2,1
+	ldrhsb	r12,[r1],1
+	strhsb	r12,[r3],1
+	bhs	loop
+	ret
+#else /* MINIMAL_STARTUP */
+#define FSIZ 0
+	mov	r3,r0
+loop:
+	ldrb	r12,[r1],1
+	subs	r2,r2,1
+	strhsb	r12,[r3],1
+	bhs	loop
+
+	ret
+#endif /* MINIMAL_STARTUP */
+#else /* THUMB */
+#define FSIZ 4
+	.thumb
+#if	!defined (__COFF)
+        .globl  memcpy
+memcpy:
+#else
+        .globl  _memcpy
+_memcpy:
+#endif
+  push		{r0}
+  mov		r3, r0	; check to see if all three arguments are 4
+  orr		r3, r1	; byte aligned
+  orr		r3, r2
+  lsl		r3, r3, 30
+  bne		notaligned
+
+  sub		r2, r2, 4	; check if we have at least one iteration
+  blt		return		; otherwise return
+
+aligned_toploop:		; handle the case of a 4 byte aligned data
+  ldmia		r1!, {r3}	; load 1 word and increment the pointer
+  stmia		r0!, {r3}	; store it back out 
+
+  sub		r2, r2, 4	; subtract the count
+  bge		aligned_toploop	; and redo as necessary
+  b		return		; reurn when done
+
+notaligned_toploop:
+
+  ldrb		r3, [r1]	; load 1 byte
+  add		r1, r1, 1	; increment the pointer
+  strb		r3, [r0]	; store 1 byte
+  add		r0, r0, 1	; increment the pointer
+
+notaligned:
+  sub		r2, r2, 1
+  bge		notaligned_toploop
+
+return:
+  pop	{r0}
+  bx	lr		; return to caller
+#endif /* THUMB */
+
+#if !defined(__COFF)
+	.type	memcpy, $function
+	.size	memcpy, .-memcpy
+#ifdef __ghs_asm
+	.fsize memcpy, FSIZ-4
+	.scall memcpy, 0
+#endif /* __ghs_asm */
+#endif

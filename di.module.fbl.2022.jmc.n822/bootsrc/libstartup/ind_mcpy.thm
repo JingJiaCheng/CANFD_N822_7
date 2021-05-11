@@ -1,0 +1,20 @@
+/*
+                Language Independent Runtime Library
+ 
+                       Copyright 1983-2001
+                    Green Hills Software,Inc.
+ 
+    This program is the property of Green Hills Software, Inc,
+    its contents are proprietary information and no part of it
+    is to be disclosed to anyone except employees of Green Hills
+    Software, Inc., or as agreed in writing signed by the President
+    of Green Hills Software, Inc.
+*/
+
+/*
+ *  void *memcpy( void *dest, const void *src, size_t count );
+ *         per apcs:     r0                r1          r2
+ * returns: r0=dest address
+ */
+
+#include "ind_mcpy.arm"

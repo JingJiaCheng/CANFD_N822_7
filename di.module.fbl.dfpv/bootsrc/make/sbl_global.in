@@ -1,0 +1,176 @@
+
+#----------------------------------------------------------------------------------------
+#   Includes
+#----------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------
+#   Common project varialbes
+#----------------------------------------------------------------------------------------
+
+# TuringTarget
+PRJDIR_Build     := $(strip $(subst /make, , $(patsubst %/,%, $(CURDIR))))
+
+# SW
+PROJDIR          := $(strip $(subst /bootsrc, , $(PRJDIR_Build)))
+
+OBJDIR           := obj
+
+# This specifies number of make jobs to use in build. Better do not set to more than (CPU cores available)
+# DO NOT REMOVE OR SET THIS TO 0. SET this up to $(NUMBER_OF_PROCESSORS) to enable paralel build 
+# setting it to "1" should mimic normal build 
+MAKE_JOBS_TO_USE := 1
+
+# The following setting enable/disable (true/false) the dependances
+# USE_DEPENDANCES = true
+
+
+# The usage of the parallel jobs is causing a problem and should NOT be used!!!
+# Left here for development purposes only.
+MAKEPARALLEL := false
+export MAKEPARALLEL
+
+
+#----------------------------------------------------------------------------------------
+#   Common Definitions
+#----------------------------------------------------------------------------------------
+
+#CPU type and single task slot selection
+# GEN2 DEFINES   := \
+# GEN2 -D$(CPU_TYPE_BUILD) \
+
+
+INCLUDES  := 
+
+CMMNFLAGS_DEFAULT :=  \
+-auto_interrupt_table \
+-interruptible_load_multiple \
+-no_arm_volatile_load_barrier \
+--hardware_divide \
+-nothumb_lib -fnofunctions \
+--vla \
+-nopic -nopid \
+--slash_comment \
+-no_multiple \
+--no_rtti \
+--readonly_typeinfo \
+--no_exceptions \
+-Onoipa \
+-Onoinline \
+-stdinc \
+-no_dual_debug \
+-nokeeptempfiles \
+-no_list
+
+CMMNFLAGS := $(CMMNFLAGS_DEFAULT) \
+-Mn \
+-Mu \
+-MD \
+--prototype_errors \
+-Wimplicit-int \
+-Wshadow \
+-Wundef -Wtrigraphs \
+--new_style_casts \
+--assembler_warnings \
+-preprocess_assembly_files \
+-globalreg=0 \
+-Omax \
+-Osize \
+-discard_zero_initializers \
+--diag_error 167,175,549,940 \
+-cpu=cortexr5 \
+-littleendian \
+-G \
+-Odebug \
+-thumb \
+-c99 \
+-needprototype \
+--long_long \
+-passsource \
+-bsp generic \
+-object_dir=obj \
+-align8 \
+-asm3g \
+-fhard \
+-nostrip \
+-dwarf2 \
+--no_commons \
+-Olink
+
+#suppress  warning 191 and turn off wraping to make diagnostics compliant with Eclipse error parser
+CFLAGS    := --no_wrap_diagnostics
+
+LFLAGS := \
+-strict_overlap_check \
+-nokeepmap \
+-Mx \
+-no_codefactor \
+--no_link_once_templates \
+--preprocess_linker_directive_full \
+-delete -linker_warnings \
+--preprocess_linker_directive
+
+#----------------------------------------------------------------------------------------
+#   Specific Toolchain used
+#----------------------------------------------------------------------------------------
+# The Following Var Should Come From Set-Environment.cmd
+#MINGW_PATH := C:/mingw
+
+#multithread
+#FIND_TOOL := $(MINGW_PATH)\bin\find.exe
+#SORT_TOOL := $(MINGW_PATH)\bin\sort.exe
+
+#CI
+#FIND_TOOL := $(MINGW_PATH)/msys/1.0/bin/find.exe
+#SORT_TOOL := $(MINGW_PATH)/msys/1.0/bin/sort.exe
+#$(error "FIND_TOOL=" $(FIND_TOOL))
+
+### GHS toolchain for target ###
+# The Following Var Should Come From Set-Environment.cmd
+#TOOLCHAIN_LOC := C:/apps/GHS/comp_201416
+CC      := ccarm
+LINK    := ccarm
+AR      := ccarm
+#GSIZE   := gsize
+#GSFLAGS := -table -rom -ram
+#SREC    := gsrec
+
+
+#-----------------------------------------------------------------------------------------
+# Utilities used by project
+#-----------------------------------------------------------------------------------------
+
+# GEN2 TRANSFOR := $(PRJDIR_Build)/Tools/TRANSFOR.exe
+# GEN2 JCICOMPRESS := $(PRJDIR_Build)/Tools/JCICOMPRESS.exe
+
+#-----------------------------------------------------------------------------------------
+# Do not edit section below
+#-----------------------------------------------------------------------------------------
+
+OBJDIR        := $(strip $(subst \,/,$(OBJDIR)))
+TOOLCHAIN_LOC := $(strip $(subst \,/,$(TOOLCHAIN_LOC)))
+
+OBJDIR :=  $(PRJDIR_Build)/$(OBJDIR)
+CC     :=  $(TOOLCHAIN_LOC)/$(CC)
+LINK   :=  $(TOOLCHAIN_LOC)/$(LINK)
+AR     :=  $(TOOLCHAIN_LOC)/$(AR)
+GSIZE  :=  $(TOOLCHAIN_LOC)/$(GSIZE)
+SREC   :=  $(TOOLCHAIN_LOC)/$(SREC)
+
+#----------------------------------------------------------------------------------------
+#   Configuration DEBUG
+#----------------------------------------------------------------------------------------
+ifeq ($(cfg),Target_Debug)
+
+OBJDIR    := $(OBJDIR)
+# V_SUPPRESS_EXTENDED_VERSION_CHECK is defined because file v_ver.h in not present in SIP
+DEFINES   += -DCPULOAD_CFG_USE_SDA=1 -DOS_USE_TRACE=1 -DDEBUG -D_DEBUG -DV_SUPPRESS_EXTENDED_VERSION_CHECK 
+DEFINES   += -DTS_ARCH_FAMILY=TS_S6J3 -DTS_ARCH_DERIVATE=TS_S6J3200 -DTS_ARCH_SUBDERIVATE=TS_S6J324CLS
+INCLUDES  += -I$(PRJDIR_Build)/Src/base
+CFLAGS    += $(CMMNFLAGS) -c
+LFLAGS    += $(CMMNFLAGS) -startfile=$(OBJDIR)/sbl/fbl_flash_drv.o 
+ARFLAGS   := $(CMMNFLAGS) -archive
+
+EXEC_NAME := sbl
+EXEC_DIR  := ../out
+
+endif

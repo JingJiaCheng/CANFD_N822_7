@@ -1,0 +1,138 @@
+/*
+*
+*                Language Independent Library
+*
+*       Copyright 1983-2013 Green Hills Software,Inc.
+*
+*  This program is the property of Green Hills Software, Inc,
+*  its contents are proprietary information and no part of it
+*  is to be disclosed to anyone except employees of Green Hills
+*  Software, Inc., or as agreed in writing signed by the President
+*  of Green Hills Software, Inc.
+*
+*/
+#include "indsyscl.h"
+#if defined(EMBEDDED)
+	.text
+#if !defined(MINIMAL_STARTUP)
+	.weak __ghsbegin_picbase
+	.weak __ghsbegin_robase
+	.weak __ghsbegin_pidbase
+	.weak __ghs_rambootcodestart
+	.weak __ghs_rambootcodeend
+	.weak __ghs_rombootcodestart
+	.weak __ghs_rombootcodeend
+#endif
+        .weak __ghs_board_memory_init
+	.weak __ghs_initial_dotsyscall
+_start::
+	.need	exit
+	.need	__dotsyscall
+; Save argc, argv, encp (if not under Multi, these are meaningless)
+	mov	x19, x0
+	mov	x20, x1
+	mov	x21, x2
+; initialize SDRAM a chance to initialize if we're running from flash
+; NOTE: elxr will jump to the next instruction if no __ghs_board_memory_init
+	bl	__ghs_board_memory_init
+; Here is where we check to see if Green Hills Multi is running on top of us.
+	mov	x0, SYSCALL_HELLO		; Set call type
+	mov	x1, 1				; Another argument
+	bl	__ghs_initial_dotsyscall	; Make system call
+	cbnz	x0, setupregs			; Did we find Multi?
+
+; We are under Multi.  Move the argc, argv, envp stuff into r1, r2, r3 for the
+; next procedure call.  They were placed in r6, r7, r8 above...
+	mov	x1, x19
+	mov	x2, x20
+	mov	x3, x21
+	b	regsokay
+
+setupregs:
+; Let's put some reasonable value in the regs
+	ldr	x1, pool_stack
+	mov 	x3, 0				; Clear envp reg
+	mov	sp, x1
+	mov	x2, 0				; Clear argv reg
+	mov	x1, 0				; Clear argc reg
+
+regsokay:
+#if !defined(MINIMAL_STARTUP)
+	adr	r0, baseptrs
+	mov	r18, 0
+	mov	r19, 0
+	mov	r20, 0
+	mov	r21, 0
+	mov	r22, 0
+	mov	r23, 0
+	mov	r24, 0
+	mov	r25, 0
+#endif
+	mov	fp, 0
+; Now let's make a call into
+; __ghs_ind_crt0 which will do some more stuff before finally calling main()
+	bl	__ghs_ind_crt0			; Go to C land
+loop_forever:
+	b	loop_forever
+	.endf	_start
+#ifdef __ghs_asm	
+	.maxstack _start, 0
+	.fsize _start, 0
+	.scall _start, __ghs_ind_crt0
+	.scall _start, __ghs_board_memory_init
+	.scall _start, __ghs_initial_dotsyscall
+#endif
+__ghs_enterblock_func::
+	ret
+	.endf __ghs_enterblock_func
+#if defined(__ghs_asm)
+	.maxstack __ghs_enterblock_func,0
+	.scall __ghs_enterblock_func,__leaf__
+#endif
+
+pool_stack:
+	.dword	__ghsend_stack
+	.endo 	pool_stack
+#if !defined(MINIMAL_STARTUP)
+	.align 8
+baseptrs:
+	.dword 1	/* baseptrs version number */
+	.dword	__ghsbegin_picbase
+	.dword	__ghsbegin_robase
+	.dword	__ghsbegin_pidbase
+	.dword	__ghs_rambootcodestart
+	.dword	__ghs_rambootcodeend
+	.dword	__ghs_rombootcodestart
+	.dword	__ghs_rombootcodeend
+	.endo baseptrs
+#endif
+
+	.section ".secinfo", "a"
+/* Secinfo: Contains information on what sections should be cleared, copied,
+	    etc.  Normally, the linker just fills this stuff in whenever the
+	    section is empty.  So, this is left commented out, but you can
+	    customize it if your application requires it.
+        .globl __ghsbinfo_clear
+        .globl __ghseinfo_clear
+__ghsbinfo_clear:
+	[these are arguments to the C function memset]
+	.data.w __ghsbegin_bss, 0, __ghssize_bss 
+	.data.w __ghsbegin_sbss,0,  __ghssize_sbss
+__ghseinfo_clear:
+
+        .globl __ghsbinfo_copy
+        .globl __ghseinfo_copy
+__ghsbinfo_copy:
+	[these are arguments to the C function memcpy]
+	.data.w	__ghsbegin_data, __ghsbegin_romdata, __ghssize_data
+__ghseinfo_copy:
+
+        .globl __ghsbinfo_gcount
+        .globl __ghseinfo_gcount
+__ghsbinfo_gcount:
+	.data.w __ghsbegin_text, __ghssize_text
+__ghseinfo_gcount:
+*/
+
+#endif
+

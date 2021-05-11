@@ -1,0 +1,17 @@
+c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/obj/../out/pbl.elf: \
+ c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/tgt/standalone_romrun_pbl_small.ld \
+ c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/obj/LibStartUp/crt0.o \
+ c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/obj/BrdMemInit/Brd-Mem-Init.o \
+ c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/obj/BrdMemInit.a \
+ c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/obj/LibStartUp.a \
+ c:/workspace/Local_Development/For_D53_Bootloader_Comparision_DEV_REL/DEV/di.module.fbl.2018.dfpv.d53/bootsrc/obj/pbl.a \
+ C:\GHS\comp_201416\lib\armavfp\libmulti.a \
+ C:\GHS\comp_201416\lib\armavfp\libfmalloc.a \
+ C:\GHS\comp_201416\lib\armavfp\libwchar_u16.a \
+ C:\GHS\comp_201416\lib\armavfp\libansi.a \
+ C:\GHS\comp_201416\lib\armavfp\libwc_u16.a \
+ C:\GHS\comp_201416\lib\armavfp\libmath.a \
+ C:\GHS\comp_201416\lib\armavfp\libind.a \
+ C:\GHS\comp_201416\lib\armavfp\libstartup.a \
+ C:\GHS\comp_201416\lib\armavfp\libsys.a \
+ C:\GHS\comp_201416\lib\armavfp\libarch.a

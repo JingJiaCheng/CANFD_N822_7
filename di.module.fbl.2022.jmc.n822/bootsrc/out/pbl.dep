@@ -1,0 +1,17 @@
+c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/obj/../out/pbl.elf: \
+ c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/tgt/standalone_romrun_pbl_small.ld \
+ c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/obj/LibStartUp/crt0.o \
+ c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/obj/BrdMemInit/Brd-Mem-Init.o \
+ c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/obj/BrdMemInit.a \
+ c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/obj/LibStartUp.a \
+ c:/SVN_N822_7/di.module.fbl.2022.jmc.n822/bootsrc/obj/pbl.a \
+ C:\GHS\comp_201416\lib\armavfp\libmulti.a \
+ C:\GHS\comp_201416\lib\armavfp\libfmalloc.a \
+ C:\GHS\comp_201416\lib\armavfp\libwchar_u16.a \
+ C:\GHS\comp_201416\lib\armavfp\libansi.a \
+ C:\GHS\comp_201416\lib\armavfp\libwc_u16.a \
+ C:\GHS\comp_201416\lib\armavfp\libmath.a \
+ C:\GHS\comp_201416\lib\armavfp\libind.a \
+ C:\GHS\comp_201416\lib\armavfp\libstartup.a \
+ C:\GHS\comp_201416\lib\armavfp\libsys.a \
+ C:\GHS\comp_201416\lib\armavfp\libarch.a
